@@ -12,7 +12,7 @@ import {
 import { ModalProvider } from "@/src/components/ModalContext";
 import { usePopupAction } from "@/src/hooks/usePopupAction";
 import { useTranslation } from "react-i18next";
-import "@/src/assets/style.css";
+import "@/src/other/style.css";
 
 function PopupContent() {
   const {

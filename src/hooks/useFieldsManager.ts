@@ -1,4 +1,4 @@
-import type { Group, Field } from "@/src/types";
+import type { Group, Field } from "@/src/other/types";
 import { saveGroups } from "@/src/utils";
 import { useModal } from "@/src/components/ModalContext";
 import { useTranslation } from "react-i18next";
@@ -27,6 +27,7 @@ export function useFieldsManager(
       targetGroup.fields.push({
         id: newId,
         enabled: true,
+        extract: false,
         fieldName: t("new_field"),
         searchType: "elementId",
         searchValue: "",

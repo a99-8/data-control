@@ -5,7 +5,7 @@ import { GroupsTable } from "@/src/components/GroupsTable";
 import { FieldsTable } from "@/src/components/FieldsTable";
 import { ModalProvider } from "@/src/components/ModalContext";
 import { Sparkles, Globe } from "lucide-react";
-import "@/src/assets/style.css";
+import "@/src/other/style.css";
 import { useTranslation } from "react-i18next";
 
 function OptionsContent() {
@@ -48,9 +48,15 @@ function OptionsContent() {
   return (
     <div
       className="container-fluid px-4 py-4"
-      style={{ maxWidth: "1200px", marginInline: "auto" }}
+      style={{
+        maxWidth: "1440px",
+        marginInline: "auto",
+        paddingLeft: "2rem",
+        paddingRight: "2rem",
+      }}
     >
-      <div className="page-title-bar mb-3 d-flex justify-content-between align-items-center">
+      {/* شريط العنوان */}
+      <div className="page-title-bar mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h3 className="m-0 d-flex align-items-center gap-2">
           <Sparkles size={20} color="yellow" />
           <span>{t("injection_extraction_settings")}</span>
@@ -67,29 +73,37 @@ function OptionsContent() {
         </button>
       </div>
 
-      <GroupsTable
-        groups={groups}
-        activeGroupIdx={activeGroupIdx}
-        onSelectGroup={setActiveGroupIdx}
-        onAddGroup={handleAddGroup}
-        onDeleteGroup={handleDeleteGroup}
-        onDeleteAll={handleDeleteAll}
-        onUpdateGroupName={handleUpdateGroupName}
-        onImportJSON={handleImportJSON}
-        onExportGroupJSON={handleExportGroupJSON}
-        onExportGroupCSV={handleExportGroupCSV}
-        onImportGroupJSON={handleImportGroupJSON}
-        onImportGroupCSV={handleImportGroupCSV}
-      />
-      {activeGroup && (
-        <FieldsTable
-          activeGroup={activeGroup}
-          onAddField={handleAddField}
-          onUpdateField={handleUpdateField}
-          onDeleteField={handleDeleteField}
-          onSaveFields={handleSaveFields}
-          onMoveField={handleMoveField}
+      {/* جدول المجموعات */}
+      <div className="mb-4">
+        <GroupsTable
+          groups={groups}
+          activeGroupIdx={activeGroupIdx}
+          onSelectGroup={setActiveGroupIdx}
+          onAddGroup={handleAddGroup}
+          onDeleteGroup={handleDeleteGroup}
+          onDeleteAll={handleDeleteAll}
+          onUpdateGroupName={handleUpdateGroupName}
+          onImportJSON={handleImportJSON}
+          onExportGroupJSON={handleExportGroupJSON}
+          onExportGroupCSV={handleExportGroupCSV}
+          onImportGroupJSON={handleImportGroupJSON}
+          onImportGroupCSV={handleImportGroupCSV}
         />
+      </div>
+
+      {/* جدول الحقول */}
+      {activeGroup && (
+        <div className="mt-4">
+          <FieldsTable
+            fields={activeGroup.fields || []}
+            activeGroupName={activeGroup.name}
+            onAddField={handleAddField}
+            onUpdateField={handleUpdateField}
+            onDeleteField={handleDeleteField}
+            onSaveFields={handleSaveFields}
+            onMoveField={handleMoveField}
+          />
+        </div>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { browser } from "wxt/browser";
 import { getGroups, saveGroups } from "@/src/utils";
-import type { Group, ActionType, ActionResponse } from "@/src/types";
+import type { Group, ActionType, ActionResponse } from "@/src/other/types";
 import { useModal } from "@/src/components/ModalContext";
 import { useTranslation } from "react-i18next";
 

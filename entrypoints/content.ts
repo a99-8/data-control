@@ -1,5 +1,5 @@
 import { browser } from "wxt/browser";
-import type { ActionRequest } from "@/src/types";
+import type { ActionRequest } from "@/src/other/types";
 import {
   handleCopyData,
   handleInjectData,

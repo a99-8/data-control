@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import type { ExtendedGroupsTableProps } from "@/src/types";
+import type { ExtendedGroupsTableProps } from "@/src/other/types";
 import {
   Folder,
   Plus,
@@ -66,13 +66,17 @@ export function GroupsTable({
   const isRtl = i18n.language.startsWith("ar");
 
   return (
-    <div className="card border-0 shadow-sm mb-4">
-      <div className="card-header py-3 border-0">
+    <div className="card border-0 shadow-sm">
+      <div className="card-header py-3 border-0 bg-transparent">
         <h4 className="card-title fw-bold m-0 d-flex align-items-center gap-2">
-          <Folder className="text-primary" size={24} /> {t("groups")}
+          <Folder className="text-primary" size={24} />
+          <span>{t("groups")}</span>
+          <span className="badge bg-secondary ms-2">{groups.length}</span>
         </h4>
       </div>
-      <div className="card-body">
+
+      <div className="card-body pt-0">
+        {/* شريط الأدوات */}
         <div className="d-flex flex-wrap gap-2 mb-3">
           <button
             className="btn btn-primary d-inline-flex align-items-center gap-1"
@@ -99,145 +103,189 @@ export function GroupsTable({
           </button>
         </div>
 
-        <div className="table-responsive" style={{ overflow: "visible" }}>
+        {/* جدول المجموعات */}
+        <div className="table-responsive">
           <table className="table table-hover align-middle border mb-0">
-            <thead>
+            <thead className="table-light">
               <tr>
-                <th style={{ width: "40%" }}>{t("group_name")}</th>
-                <th className="text-center" style={{ width: "60%" }}>
+                <th style={{ minWidth: "250px", width: "40%" }}>
+                  {t("group_name")}
+                </th>
+                <th
+                  className="text-center"
+                  style={{ minWidth: "400px", width: "60%" }}
+                >
                   {t("actions")}
                 </th>
               </tr>
             </thead>
             <tbody>
-              {groups.map((grp, idx) => {
-                const isOpen = openDropdownIdx === idx;
-                return (
-                  <tr
-                    key={grp.id}
-                    className={activeGroupIdx === idx ? "table-active" : ""}
-                  >
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        value={grp.name}
-                        onChange={(e) => onUpdateGroupName(idx, e.target.value)}
-                      />
-                    </td>
-                    <td className="text-center">
-                      <div className="btn-group btn-group-sm">
-                        <div
-                          ref={isOpen ? dropdownRef : null}
-                          className="btn-group btn-group-sm position-relative"
-                        >
-                          <button
-                            type="button"
-                            className="btn btn-outline-success dropdown-toggle d-inline-flex align-items-center gap-1"
-                            onClick={() => toggleDropdown(idx)}
+              {groups.length === 0 ? (
+                <tr>
+                  <td colSpan={2} className="text-center py-4 text-muted">
+                    {t("no_groups_added") ||
+                      "لا توجد مجموعات. أضف مجموعة جديدة"}
+                  </td>
+                </tr>
+              ) : (
+                groups.map((grp, idx) => {
+                  const isOpen = openDropdownIdx === idx;
+                  const isActive = activeGroupIdx === idx;
+
+                  return (
+                    <tr
+                      key={grp.id}
+                      className={isActive ? "table-active" : ""}
+                      style={{
+                        backgroundColor: isActive
+                          ? "rgba(13, 110, 253, 0.05)"
+                          : "",
+                        transition: "background-color 0.2s ease",
+                      }}
+                    >
+                      {/* عمود اسم المجموعة */}
+                      <td>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          value={grp.name}
+                          onChange={(e) =>
+                            onUpdateGroupName(idx, e.target.value)
+                          }
+                          placeholder={
+                            t("enter_group_name") || "أدخل اسم المجموعة"
+                          }
+                        />
+                      </td>
+
+                      {/* عمود الإجراءات */}
+                      <td className="text-center">
+                        <div className="d-flex flex-wrap align-items-center justify-content-center gap-1">
+                          {/* قائمة الاستيراد/التصدير */}
+                          <div
+                            ref={isOpen ? dropdownRef : null}
+                            className="position-relative d-inline-block"
                           >
-                            <ArrowUpDown size={14} /> {t("import_export")}
+                            <button
+                              type="button"
+                              className="btn btn-outline-success btn-sm dropdown-toggle d-inline-flex align-items-center gap-1"
+                              onClick={() => toggleDropdown(idx)}
+                            >
+                              <ArrowUpDown size={14} />
+                              <span>{t("import_export")}</span>
+                            </button>
+
+                            {isOpen && (
+                              <ul
+                                className="dropdown-menu show shadow-lg"
+                                style={{
+                                  position: "absolute",
+                                  top: "100%",
+                                  [isRtl ? "right" : "left"]: "0",
+                                  zIndex: 9999,
+                                  marginTop: "4px",
+                                  minWidth: "190px",
+                                  backgroundColor: "#1e293b",
+                                  borderColor: "rgba(255, 255, 255, 0.15)",
+                                  color: "#f8fafc",
+                                  padding: "0.25rem 0",
+                                }}
+                              >
+                                <li>
+                                  <label className="dropdown-item d-flex align-items-center gap-2 cursor-pointer m-0 text-light dark-item">
+                                    <FileSpreadsheet size={16} />
+                                    <span>{t("upload_from_csv")}</span>
+                                    <input
+                                      type="file"
+                                      className="d-none"
+                                      accept=".csv"
+                                      onChange={(e) => {
+                                        onImportGroupCSV?.(idx, e);
+                                        closeDropdown();
+                                      }}
+                                    />
+                                  </label>
+                                </li>
+                                <li>
+                                  <button
+                                    type="button"
+                                    className="dropdown-item d-flex align-items-center gap-2 text-start text-light dark-item"
+                                    onClick={() => {
+                                      onExportGroupCSV?.(idx);
+                                      closeDropdown();
+                                    }}
+                                  >
+                                    <Download size={16} />
+                                    <span>{t("download_csv")}</span>
+                                  </button>
+                                </li>
+                                <li>
+                                  <hr
+                                    className="dropdown-divider my-1"
+                                    style={{
+                                      borderColor: "rgba(255, 255, 255, 0.1)",
+                                    }}
+                                  />
+                                </li>
+                                <li>
+                                  <label className="dropdown-item d-flex align-items-center gap-2 cursor-pointer m-0 text-light dark-item">
+                                    <FileJson size={16} />
+                                    <span>{t("upload_from_json")}</span>
+                                    <input
+                                      type="file"
+                                      className="d-none"
+                                      accept=".json"
+                                      onChange={(e) => {
+                                        onImportGroupJSON?.(idx, e);
+                                        closeDropdown();
+                                      }}
+                                    />
+                                  </label>
+                                </li>
+                                <li>
+                                  <button
+                                    type="button"
+                                    className="dropdown-item d-flex align-items-center gap-2 text-start text-light dark-item"
+                                    onClick={() => {
+                                      onExportGroupJSON?.(idx);
+                                      closeDropdown();
+                                    }}
+                                  >
+                                    <Download size={16} />
+                                    <span>{t("download_json")}</span>
+                                  </button>
+                                </li>
+                              </ul>
+                            )}
+                          </div>
+
+                          {/* زر الحقول */}
+                          <button
+                            className="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1"
+                            onClick={() => onSelectGroup(idx)}
+                          >
+                            <SlidersHorizontal size={14} />
+                            <span>{t("fields")}</span>
+                            <span className="badge bg-primary bg-opacity-25 text-primary ms-1">
+                              {grp.fields?.length || 0}
+                            </span>
                           </button>
 
-                          {isOpen && (
-                            <ul
-                              className="dropdown-menu show shadow-lg"
-                              style={{
-                                position: "absolute",
-                                top: "100%",
-                                [isRtl ? "right" : "left"]: "0",
-                                zIndex: 9999,
-                                marginTop: "4px",
-                                minWidth: "170px",
-                                backgroundColor: "#1e293b",
-                                borderColor: "rgba(255, 255, 255, 0.15)",
-                                color: "#f8fafc",
-                              }}
-                            >
-                              <li>
-                                <label className="dropdown-item d-flex align-items-center gap-2 cursor-pointer m-0 text-light dark-item">
-                                  <FileSpreadsheet size={16} />{" "}
-                                  {t("upload_from_csv")}
-                                  <input
-                                    type="file"
-                                    className="d-none"
-                                    accept=".csv"
-                                    onChange={(e) => {
-                                      onImportGroupCSV?.(idx, e);
-                                      closeDropdown();
-                                    }}
-                                  />
-                                </label>
-                              </li>
-                              <li>
-                                <button
-                                  type="button"
-                                  className="dropdown-item d-flex align-items-center gap-2 text-start text-light dark-item"
-                                  onClick={() => {
-                                    onExportGroupCSV?.(idx);
-                                    closeDropdown();
-                                  }}
-                                >
-                                  <Download size={16} /> {t("download_csv")}
-                                </button>
-                              </li>
-                              <li>
-                                <hr
-                                  className="dropdown-divider my-1"
-                                  style={{
-                                    borderColor: "rgba(255, 255, 255, 0.1)",
-                                  }}
-                                />
-                              </li>
-                              <li>
-                                <label className="dropdown-item d-flex align-items-center gap-2 cursor-pointer m-0 text-light dark-item">
-                                  <FileJson size={16} /> {t("upload_from_json")}
-                                  <input
-                                    type="file"
-                                    className="d-none"
-                                    accept=".json"
-                                    onChange={(e) => {
-                                      onImportGroupJSON?.(idx, e);
-                                      closeDropdown();
-                                    }}
-                                  />
-                                </label>
-                              </li>
-                              <li>
-                                <button
-                                  type="button"
-                                  className="dropdown-item d-flex align-items-center gap-2 text-start text-light dark-item"
-                                  onClick={() => {
-                                    onExportGroupJSON?.(idx);
-                                    closeDropdown();
-                                  }}
-                                >
-                                  <Download size={16} /> {t("download_json")}
-                                </button>
-                              </li>
-                            </ul>
-                          )}
+                          {/* زر الحذف */}
+                          <button
+                            type="button"
+                            className="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1"
+                            onClick={() => onDeleteGroup(idx)}
+                          >
+                            <Trash2 size={14} />
+                            <span>{t("delete")}</span>
+                          </button>
                         </div>
-
-                        <button
-                          className="btn btn-outline-primary d-inline-flex align-items-center gap-1"
-                          onClick={() => onSelectGroup(idx)}
-                        >
-                          <SlidersHorizontal size={14} /> {t("fields")} (
-                          {grp.fields?.length || 0})
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger d-inline-flex align-items-center gap-1"
-                          onClick={() => onDeleteGroup(idx)}
-                        >
-                          <Trash2 size={14} /> {t("delete")}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

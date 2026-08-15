@@ -1,5 +1,5 @@
 import { storage } from "wxt/utils/storage";
-import type { Group } from "@/src/types";
+import type { Group } from "@/src/other/types";
 export * from "@/src/utils/handlerpopupAction";
 export * from "@/src/utils/injector-scraper";
 

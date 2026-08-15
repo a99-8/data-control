@@ -3,7 +3,7 @@ import {
   injectGroupData,
 } from "@/src/utils/injector-scraper";
 import { downloadCSV } from "@/src/utils/";
-import type { ActionRequest, ActionResponse, Group } from "@/src/types";
+import type { ActionRequest, ActionResponse, Group } from "@/src/other/types";
 import { omit } from "lodash-es";
 import i18n from "@/src/i18n"; // استدعاء ملف تهيئة i18next الرئيسي
 

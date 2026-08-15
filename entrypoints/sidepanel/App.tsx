@@ -2,7 +2,7 @@ import { useSidePanelInspector } from "@/src/hooks/useSidePanelInspector";
 import { Search, Plus, Globe } from "lucide-react";
 import { ModalProvider } from "@/src/components/ModalContext";
 import { useTranslation } from "react-i18next";
-import { ScanFieldsTable } from "@/src/components/ScanFieldsTable";
+import { FieldsTable } from "@/src/components/FieldsTable";
 
 function SidePanel() {
   const { t, i18n } = useTranslation();
@@ -228,16 +228,17 @@ function SidePanel() {
         </div>
       </div>
 
-      <ScanFieldsTable
+      <FieldsTable
+        compact={true}
         fields={fields}
         selectedIds={selectedIds}
         isAllSelected={isAllSelected}
         toggleSelectAll={toggleSelectAll}
         toggleSelectField={toggleSelectField}
-        handleAddField={handleAddField}
-        handleMoveField={handleMoveField}
-        handleUpdateField={handleUpdateField}
-        handleDeleteField={handleDeleteField}
+        onAddField={handleAddField}
+        onUpdateField={handleUpdateField}
+        onDeleteField={handleDeleteField}
+        onMoveField={handleMoveField}
       />
     </div>
   );

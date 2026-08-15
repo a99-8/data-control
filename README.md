@@ -1,4 +1,6 @@
-# 🧩 CSV Injector & Scraper Extension (`csv-injector-extension`)
+> 🤖 **ملاحظة:** تم استخدام **Gemini AI** للمساعدة في تطوير وبرمجة هذا المشروع.
+
+# 🧩 CSV Injector & Scraper Extension (`data-control`)
 
 إضافة متصفح حديثة ومتقدمة مبنية باستخدام **WXT Framework** و **React** و **TypeScript**. تتيح الإضافة للمستخدمين إمكانية استخراج البيانات (Data Scraping) وحقنها (Data Injection) داخل عناصر صفحات الويب المحددة بشكل آلي ومخصص، مع دعم بناء مجموعات متعدّدة (Groups) وحقول إدخال ديناميكية (Fields).
 

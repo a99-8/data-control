@@ -5,7 +5,7 @@ import type {
   InspectedElementData,
   SearchType,
   TableField,
-} from "@/src/types";
+} from "@/src/other/types";
 import { getGroups, saveGroups, reorderArray } from "@/src/utils";
 import { useModal } from "@/src/components/ModalContext";
 import { useTranslation } from "react-i18next";

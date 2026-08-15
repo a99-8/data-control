@@ -5,7 +5,7 @@ import React, {
   type ReactNode,
 } from "react";
 import { Modal } from "@/src/components/Modal";
-import type { ModalType, VariantType } from "@/src/types";
+import type { ModalType, VariantType } from "@/src/other/types";
 import { useTranslation } from "react-i18next";
 
 interface ModalOptions {

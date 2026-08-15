@@ -1,6 +1,6 @@
 import React from "react";
 import { AlertTriangle, CheckCircle2, XCircle, Info } from "lucide-react";
-import type { ModalProps } from "@/src/types";
+import type { ModalProps } from "@/src/other/types";
 import { useTranslation } from "react-i18next";
 
 export const Modal: React.FC<ModalProps> = ({

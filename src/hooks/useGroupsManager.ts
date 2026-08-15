@@ -1,6 +1,6 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { getGroups, saveGroups } from "@/src/utils";
-import type { Group } from "@/src/types";
+import type { Group } from "@/src/other/types";
 import { useModal } from "@/src/components/ModalContext";
 import { useTranslation } from "react-i18next";
 
@@ -70,17 +70,36 @@ export function useGroupsManager() {
     reader.onload = (event) => {
       try {
         const parsed = JSON.parse(event.target?.result as string);
-        const imported = parsed.group
-          ? [parsed.group]
-          : Array.isArray(parsed)
-            ? parsed
-            : [];
+
+        // دعم كافة أشكال الـ JSON الممكنة (مجموعة واحدة مباشرة، أو كائن يحتوي على group/groups، أو مصفوفة)
+        let imported: Group[] = [];
+
+        if (Array.isArray(parsed)) {
+          imported = parsed;
+        } else if (parsed.groups && Array.isArray(parsed.groups)) {
+          imported = parsed.groups;
+        } else if (parsed.group) {
+          imported = [parsed.group];
+        } else if (parsed.fields && parsed.name) {
+          // إذا كان الملف يحتوي على بيانات مجموعة واحدة مباشرة مثل ملفك الحالي
+          imported = [parsed];
+        }
+
+        if (imported.length === 0) {
+          showAlert(t("import_failed"), "danger", t("error"));
+          return;
+        }
+
         updateAndSaveGroups([...groups, ...imported]);
         showAlert(t("import_success"), "success", t("success"));
       } catch {
         showAlert(t("import_failed"), "danger", t("error"));
+      } finally {
+        // تفريغ قيمة المدخل لتتمكن من استيراد نفس الملف مرة أخرى دون مشاكل
+        e.target.value = "";
       }
     };
+
     reader.readAsText(file);
   };
 

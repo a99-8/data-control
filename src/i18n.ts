@@ -2,8 +2,8 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-import ar from "@/src/locales/ar.json";
-import en from "@/src//locales/en.json";
+import ar from "@/src/other/ar.json";
+import en from "@/src//other/en.json";
 
 // تحديث اتجاه النص (RTL / LTR) في DOM
 const updateDocumentDirection = (lng: string) => {

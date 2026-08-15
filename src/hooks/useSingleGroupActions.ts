@@ -1,5 +1,5 @@
 import { type ChangeEvent } from "react";
-import type { Group, Field } from "@/src/types";
+import type { Group, Field } from "@/src/other/types";
 import { downloadCSV } from "@/src/utils";
 import { useModal } from "@/src/components/ModalContext";
 import { useTranslation } from "react-i18next";

@@ -6,7 +6,8 @@ export type SearchType =
   | "regexId"
   | "elementPlaceholder"
   | "formControlName"
-  | "defaultValue";
+  | "defaultValue"
+  | "cssSelector";
 
 export type ActionType =
   | "SCRAPE_DATA"
@@ -21,9 +22,12 @@ export type ModalType = "alert" | "confirm";
 export type VariantType = "success" | "danger" | "warning" | "info";
 
 // --- Models ---
+export type VerificationMode = "none" | "extract_compare" | "compare_only";
+
 export interface Field {
   id: string;
   enabled?: boolean;
+  verificationMode?: VerificationMode; // بدلاً من extract?: boolean
   fieldName: string;
   searchType: SearchType;
   searchValue: string;

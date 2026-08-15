@@ -46,19 +46,12 @@ function OptionsContent() {
   } = useFieldsManager(groups, activeGroupIdx, setGroups, updateAndSaveGroups);
 
   return (
-    <div
-      className="container-fluid px-4 py-4"
-      style={{
-        maxWidth: "1440px",
-        marginInline: "auto",
-        paddingLeft: "2rem",
-        paddingRight: "2rem",
-      }}
-    >
+    /* تم إزالة style واستبدال الحاوية بـ container-xxl لتطبيق maxWidth تلقائياً مع px-4 */
+    <div className="container-xxl px-4 py-4">
       {/* شريط العنوان */}
       <div className="page-title-bar mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h3 className="m-0 d-flex align-items-center gap-2">
-          <Sparkles size={20} color="yellow" />
+          <Sparkles size={20} className="text-warning" />
           <span>{t("injection_extraction_settings")}</span>
         </h3>
         <button

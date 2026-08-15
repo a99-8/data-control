@@ -44,34 +44,16 @@ export const FullFieldsTable: React.FC<FullFieldsTableProps> = ({
           <table className="table table-dark table-bordered table-hover align-middle mb-0">
             <thead className="table-dark border-secondary text-center">
               <tr>
-                <th style={{ width: "50px", minWidth: "50px" }}>
-                  {t("order")}
-                </th>
-                <th style={{ width: "70px", minWidth: "70px" }}>ID</th>
-                <th style={{ width: "50px", minWidth: "50px" }}>
-                  {t("enable")}
-                </th>
-                <th style={{ minWidth: "100px", width: "15%" }}>
-                  {t("field_name")}
-                </th>
-                <th style={{ width: "150px", minWidth: "150px" }}>
-                  {t("search_type")}
-                </th>
-                <th style={{ minWidth: "200px", width: "10%" }}>
-                  {t("element_selector")}
-                </th>
-                <th style={{ minWidth: "170px", width: "15%" }}>
-                  {t("injection_value")}
-                </th>
-                <th style={{ width: "130px", minWidth: "130px" }}>
-                  {t("verification_mode")}
-                </th>
-                <th style={{ minWidth: "150px", width: "17%" }}>
-                  {t("conditions_json")}
-                </th>
-                <th style={{ width: "50px", minWidth: "50px" }}>
-                  {t("delete")}
-                </th>
+                <th className="col-order">{t("order")}</th>
+                <th className="col-field-id">ID</th>
+                <th className="col-toggle">{t("enable")}</th>
+                <th className="col-field-name">{t("field_name")}</th>
+                <th className="col-search-type">{t("search_type")}</th>
+                <th className="col-selector">{t("element_selector")}</th>
+                <th className="col-injection">{t("injection_value")}</th>
+                <th className="col-verification">{t("verification_mode")}</th>
+                <th className="col-conditions">{t("conditions_json")}</th>
+                <th className="col-action-sm">{t("delete")}</th>
               </tr>
             </thead>
             <tbody>

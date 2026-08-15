@@ -108,15 +108,9 @@ export function GroupsTable({
           <table className="table table-hover align-middle border mb-0">
             <thead className="table-light">
               <tr>
-                <th style={{ minWidth: "250px", width: "40%" }}>
-                  {t("group_name")}
-                </th>
-                <th
-                  className="text-center"
-                  style={{ minWidth: "400px", width: "60%" }}
-                >
-                  {t("actions")}
-                </th>
+                {/* تم نقل العرض إلى فئات Bootstrap والـ CSS */}
+                <th className="col-group-name">{t("group_name")}</th>
+                <th className="col-actions text-center">{t("actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -135,13 +129,9 @@ export function GroupsTable({
                   return (
                     <tr
                       key={grp.id}
-                      className={isActive ? "table-active" : ""}
-                      style={{
-                        backgroundColor: isActive
-                          ? "rgba(13, 110, 253, 0.05)"
-                          : "",
-                        transition: "background-color 0.2s ease",
-                      }}
+                      className={
+                        isActive ? "table-active custom-active-row" : ""
+                      }
                     >
                       {/* عمود اسم المجموعة */}
                       <td>
@@ -176,23 +166,10 @@ export function GroupsTable({
                             </button>
 
                             {isOpen && (
-                              <ul
-                                className="dropdown-menu show shadow-lg"
-                                style={{
-                                  position: "absolute",
-                                  top: "100%",
-                                  [isRtl ? "right" : "left"]: "0",
-                                  zIndex: 9999,
-                                  marginTop: "4px",
-                                  minWidth: "190px",
-                                  backgroundColor: "#1e293b",
-                                  borderColor: "rgba(255, 255, 255, 0.15)",
-                                  color: "#f8fafc",
-                                  padding: "0.25rem 0",
-                                }}
-                              >
+                              /* تم تحويل التنسيقات المباشرة إلى الفئة custom-dropdown-menu */
+                              <ul className="dropdown-menu show shadow-lg custom-dropdown-menu">
                                 <li>
-                                  <label className="dropdown-item d-flex align-items-center gap-2 cursor-pointer m-0 text-light dark-item">
+                                  <label className="dropdown-item d-flex align-items-center gap-2 cursor-pointer m-0 dark-item">
                                     <FileSpreadsheet size={16} />
                                     <span>{t("upload_from_csv")}</span>
                                     <input
@@ -209,7 +186,7 @@ export function GroupsTable({
                                 <li>
                                   <button
                                     type="button"
-                                    className="dropdown-item d-flex align-items-center gap-2 text-start text-light dark-item"
+                                    className="dropdown-item d-flex align-items-center gap-2 text-start dark-item"
                                     onClick={() => {
                                       onExportGroupCSV?.(idx);
                                       closeDropdown();
@@ -220,15 +197,10 @@ export function GroupsTable({
                                   </button>
                                 </li>
                                 <li>
-                                  <hr
-                                    className="dropdown-divider my-1"
-                                    style={{
-                                      borderColor: "rgba(255, 255, 255, 0.1)",
-                                    }}
-                                  />
+                                  <hr className="dropdown-divider my-1 dark-divider" />
                                 </li>
                                 <li>
-                                  <label className="dropdown-item d-flex align-items-center gap-2 cursor-pointer m-0 text-light dark-item">
+                                  <label className="dropdown-item d-flex align-items-center gap-2 cursor-pointer m-0 dark-item">
                                     <FileJson size={16} />
                                     <span>{t("upload_from_json")}</span>
                                     <input
@@ -245,7 +217,7 @@ export function GroupsTable({
                                 <li>
                                   <button
                                     type="button"
-                                    className="dropdown-item d-flex align-items-center gap-2 text-start text-light dark-item"
+                                    className="dropdown-item d-flex align-items-center gap-2 text-start dark-item"
                                     onClick={() => {
                                       onExportGroupJSON?.(idx);
                                       closeDropdown();

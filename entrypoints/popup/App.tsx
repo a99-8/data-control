@@ -32,7 +32,7 @@ function PopupContent() {
   };
 
   return (
-    <div className="app-shell p-3" style={{ minWidth: "340px" }}>
+    <div className="app-shell p-3 popup-container">
       <header className="app-header mb-3 d-flex align-items-center justify-content-between pb-2 border-bottom">
         <h6 className="m-0 fw-bold d-flex align-items-center gap-2">
           <Zap className="text-warning fill-warning" size={20} />

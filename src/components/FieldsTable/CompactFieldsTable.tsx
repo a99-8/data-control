@@ -46,7 +46,7 @@ export const CompactFieldsTable: React.FC<CompactFieldsTableProps> = ({
           <table className="table table-dark table-bordered table-hover align-middle mb-0">
             <thead className="table-dark border-secondary text-center small">
               <tr>
-                <th style={{ width: "40px", minWidth: "40px" }}>
+                <th className="col-checkbox">
                   <button
                     type="button"
                     className="btn btn-link text-light p-0"
@@ -60,18 +60,10 @@ export const CompactFieldsTable: React.FC<CompactFieldsTableProps> = ({
                     )}
                   </button>
                 </th>
-                <th style={{ minWidth: "100px", width: "15%" }}>
-                  {t("field_name")}
-                </th>
-                <th style={{ width: "150px", minWidth: "150px" }}>
-                  {t("selector_type")}
-                </th>
-                <th style={{ minWidth: "200px", width: "10%" }}>
-                  {t("element_selector")}
-                </th>
-                <th style={{ width: "45px", minWidth: "45px" }}>
-                  {t("delete")}
-                </th>
+                <th className="col-field-name">{t("field_name")}</th>
+                <th className="col-search-type">{t("selector_type")}</th>
+                <th className="col-selector">{t("element_selector")}</th>
+                <th className="col-action-sm">{t("delete")}</th>
               </tr>
             </thead>
             <tbody className="small">

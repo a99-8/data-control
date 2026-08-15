@@ -281,3 +281,190 @@ hr {
   -moz-appearance: textfield;
   appearance: textfield;
 }
+
+/* ==========================================================================
+   4. القواعد المخصصة للجداول والقوائم المنسدلة (Custom Layout Utilities)
+   ========================================================================== */
+
+/* عرض أعمدة جدول المجموعات */
+.col-group-name {
+  min-width: 250px;
+  width: 40%;
+}
+
+.col-actions {
+  min-width: 400px;
+  width: 60%;
+}
+
+/* تمييز الصف النشط */
+.custom-active-row {
+  background-color: rgba(13, 110, 253, 0.05) !important;
+  transition: background-color 0.2s ease;
+}
+
+/* القائمة المنسدلة المخصصة */
+.custom-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  inset-inline-start: 0; /* يتعامل مع RTL و LTR تلقائياً دون الحاجة لشرط في React */
+  z-index: 9999;
+  margin-top: 4px;
+  min-width: 190px;
+  background-color: #1e293b;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+  padding: 0.25rem 0;
+}
+
+.dark-divider {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* المؤشر */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   5. تنسيقات النافذة والـ Modal القابلة لإعادة الاستخدام (Modal & Popup Utilities)
+   ========================================================================== */
+
+/* عرض واجهة النافذة المنبثقة */
+.popup-container {
+  min-width: 340px;
+}
+
+/* خلفية المودال المظلمة مع تأثير الضبابية */
+.modal-backdrop-custom {
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+/* بطاقة المودال */
+.modal-content-custom {
+  background-color: var(--bg-panel) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--line-strong) !important;
+  border-radius: 12px !important;
+}
+
+.text-body-custom {
+  color: var(--text) !important;
+}
+
+.text-dim-custom {
+  color: var(--text-dim) !important;
+}
+
+.modal-message {
+  line-height: 1.6;
+}
+
+.modal-close-btn {
+  opacity: 0.8;
+}
+
+/* أيقونات المودال حسب الحالة */
+.modal-icon-success {
+  color: var(--accent);
+}
+.modal-icon-danger {
+  color: var(--danger);
+}
+.modal-icon-warning {
+  color: var(--amber);
+}
+.modal-icon-info {
+  color: var(--accent-2);
+}
+
+/* أزرار التأكيد والإلغاء للمودال */
+.btn-modal-cancel {
+  background-color: transparent !important;
+  border-color: var(--line-strong) !important;
+  color: var(--text-dim) !important;
+}
+
+.btn-modal-danger {
+  background-color: var(--danger) !important;
+  border-color: var(--danger) !important;
+  color: #ffffff !important;
+}
+
+.btn-modal-warning {
+  background-color: var(--amber) !important;
+  border-color: var(--amber) !important;
+  color: #000000 !important;
+}
+
+.btn-modal-success {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--bg-deep) !important;
+}
+
+.btn-modal-info {
+  background-color: var(--accent-2) !important;
+  border-color: var(--accent-2) !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   6. العروض المخصصة لأعمدة جداول الحقول (Fields Tables Column Widths)
+   ========================================================================== */
+
+.col-checkbox {
+  width: 40px;
+  min-width: 40px;
+}
+
+.col-order {
+  width: 50px;
+  min-width: 50px;
+}
+
+.col-field-id {
+  width: 70px;
+  min-width: 70px;
+}
+
+.col-toggle {
+  width: 50px;
+  min-width: 50px;
+}
+
+.col-field-name {
+  min-width: 100px;
+  width: 15%;
+}
+
+.col-search-type {
+  width: 150px;
+  min-width: 150px;
+}
+
+.col-selector {
+  min-width: 200px;
+  width: 10%;
+}
+
+.col-injection {
+  min-width: 170px;
+  width: 15%;
+}
+
+.col-verification {
+  width: 130px;
+  min-width: 130px;
+}
+
+.col-conditions {
+  min-width: 150px;
+  width: 17%;
+}
+
+.col-action-sm {
+  width: 50px;
+  min-width: 50px;
+}

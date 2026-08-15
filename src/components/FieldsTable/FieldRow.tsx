@@ -25,19 +25,16 @@ export const FieldRow: React.FC<FieldRowProps> = ({
   onDeleteField,
   onMoveField,
 }) => {
-  const inputClass = compact
-    ? "form-control form-control-sm bg-dark text-white border-secondary"
-    : "form-control form-control-sm bg-dark text-white border-secondary";
-
-  const selectClass = compact
-    ? "form-select form-select-sm bg-dark text-white border-secondary"
-    : "form-select form-select-sm bg-dark text-white border-secondary";
+  const inputClass =
+    "form-control form-control-sm bg-dark text-white border-secondary";
+  const selectClass =
+    "form-select form-select-sm bg-dark text-white border-secondary";
 
   return (
     <tr>
       {/* عمود التحديد - نسخة مضغوطة */}
       {compact ? (
-        <td className="text-center" style={{ width: "40px", minWidth: "40px" }}>
+        <td className="text-center col-checkbox">
           <input
             type="checkbox"
             className="form-check-input"
@@ -48,10 +45,7 @@ export const FieldRow: React.FC<FieldRowProps> = ({
       ) : (
         <>
           {/* عمود الترتيب - النسخة الكاملة */}
-          <td
-            className="text-center"
-            style={{ width: "50px", minWidth: "50px" }}
-          >
+          <td className="text-center col-order">
             <input
               type="number"
               className={`${inputClass} text-center px-1 no-spinner`}
@@ -72,17 +66,11 @@ export const FieldRow: React.FC<FieldRowProps> = ({
             />
           </td>
           {/* عمود ID الحقل */}
-          <td
-            className="text-center"
-            style={{ width: "65px", minWidth: "65px" }}
-          >
+          <td className="text-center col-field-id">
             <code className="small fw-bold text-danger">{field.id}</code>
           </td>
           {/* عمود التفعيل */}
-          <td
-            className="text-center"
-            style={{ width: "45px", minWidth: "45px" }}
-          >
+          <td className="text-center col-toggle">
             <input
               type="checkbox"
               className="form-check-input"
@@ -95,8 +83,8 @@ export const FieldRow: React.FC<FieldRowProps> = ({
         </>
       )}
 
-      {/* عمود اسم الحقل - عرض مرن */}
-      <td style={{ minWidth: "100px", width: "15%" }}>
+      {/* عمود اسم الحقل */}
+      <td className="col-field-name">
         <input
           type="text"
           className={inputClass}
@@ -106,8 +94,8 @@ export const FieldRow: React.FC<FieldRowProps> = ({
         />
       </td>
 
-      {/* عمود نوع البحث - عرض ثابت */}
-      <td style={{ width: "150px", minWidth: "150px" }}>
+      {/* عمود نوع البحث */}
+      <td className="col-search-type">
         <select
           className={selectClass}
           value={field.searchType}
@@ -124,8 +112,8 @@ export const FieldRow: React.FC<FieldRowProps> = ({
         </select>
       </td>
 
-      {/* عمود محدد العنصر - عرض مرن كبير */}
-      <td style={{ minWidth: "200px", width: "10%" }}>
+      {/* عمود محدد العنصر */}
+      <td className="col-selector">
         <input
           type="text"
           className={`${inputClass} font-monospace`}
@@ -139,7 +127,7 @@ export const FieldRow: React.FC<FieldRowProps> = ({
       {!compact && (
         <>
           {/* عمود قيمة الحقن */}
-          <td style={{ minWidth: "170px", width: "15%" }}>
+          <td className="col-injection">
             <input
               type="text"
               className={inputClass}
@@ -152,10 +140,7 @@ export const FieldRow: React.FC<FieldRowProps> = ({
           </td>
 
           {/* عمود طريقة التحقق */}
-          <td
-            className="text-center"
-            style={{ width: "130px", minWidth: "130px" }}
-          >
+          <td className="text-center col-verification">
             <select
               className={selectClass}
               value={field.verificationMode || "none"}
@@ -174,7 +159,7 @@ export const FieldRow: React.FC<FieldRowProps> = ({
           </td>
 
           {/* عمود الشروط JSON */}
-          <td style={{ minWidth: "150px", width: "17%" }}>
+          <td className="col-conditions">
             <textarea
               className={`${inputClass} font-monospace`}
               rows={2}
@@ -192,8 +177,8 @@ export const FieldRow: React.FC<FieldRowProps> = ({
         </>
       )}
 
-      {/* عمود الحذف - عرض ثابت */}
-      <td className="text-center" style={{ width: "45px", minWidth: "45px" }}>
+      {/* عمود الحذف */}
+      <td className="text-center col-action-sm">
         <button
           className="btn btn-sm btn-outline-danger p-1 d-inline-flex align-items-center justify-content-center"
           onClick={() => onDeleteField(index)}

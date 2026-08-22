@@ -27,7 +27,6 @@ export function useFieldsManager(
       targetGroup.fields.push({
         id: newId,
         enabled: true,
-        extract: false,
         fieldName: t("new_field"),
         searchType: "elementId",
         searchValue: "",
@@ -65,29 +64,14 @@ export function useFieldsManager(
     }
   };
 
+  // داخل handleSaveFields:
+  // احذف الكود السابق الذي يحتوي على JSON.parse(field.conditions)
   const handleSaveFields = () => {
     if (activeGroupIdx === null || !groups[activeGroupIdx]) return;
     const group = groups[activeGroupIdx];
     if (!group) return;
 
-    for (const field of group.fields) {
-      if (
-        typeof field.conditions === "string" &&
-        field.conditions.trim() !== ""
-      ) {
-        try {
-          JSON.parse(field.conditions);
-        } catch {
-          showAlert(
-            t("json_format_error", { fieldName: field.fieldName }),
-            "danger",
-            t("input_error"),
-          );
-          return;
-        }
-      }
-    }
-
+    // حفظ التغييرات مباشرة لأن صيغ HyperFormula لا تحتاج JSON.parse
     saveGroups(groups);
     showAlert(t("changes_saved_success"), "success", t("saved"));
   };

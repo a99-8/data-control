@@ -305,10 +305,10 @@ hr {
 
 /* القائمة المنسدلة المخصصة */
 .custom-dropdown-menu {
-  position: absolute;
+  position: absolute !important; /* ضمان خروج العنصر من التدفق الطبيعي */
   top: 100%;
-  inset-inline-start: 0; /* يتعامل مع RTL و LTR تلقائياً دون الحاجة لشرط في React */
-  z-index: 9999;
+  inset-inline-start: 0;
+  z-index: 1050 !important; /* رفع الترتيب لتجاوز عناصر الجدول الأخرى */
   margin-top: 4px;
   min-width: 190px;
   background-color: #1e293b;

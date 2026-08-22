@@ -1,4 +1,5 @@
 import type { Field, Group } from "@/src/other/types";
+import { evaluateFormulaCondition } from "./hyperformula-evaluator";
 
 function findInputElement(field: Field): HTMLElement[] {
   const val = (field.searchValue || "").trim();
@@ -179,11 +180,11 @@ export function extractGroupData(group: Group): Record<string, any>[] {
   const rowObj: Record<string, any> = {};
   const valuesByFieldId: Record<string, any> = {};
 
+  // 1. استخراج البيانات كما هي
   group.fields.forEach((field) => {
     let val = "";
     const mode = field.verificationMode || "extract_compare";
 
-    // إذا كان الوضع "compare_only" أو "none"، لا نستخرج من الصفحة
     if (mode !== "compare_only" && field.searchType !== "defaultValue") {
       const nodes = findInputElement(field);
       if (nodes.length === 1 && nodes[0]) {
@@ -211,13 +212,13 @@ export function extractGroupData(group: Group): Record<string, any>[] {
     if (field.id) valuesByFieldId[field.id] = val;
   });
 
-  // تطبيق الشروط بناءً على كيفية التحقق
+  // 2. تطبيق صيغ HyperFormula للتحقق والمقارنة
   group.fields.forEach((field) => {
     const mode = field.verificationMode || "extract_compare";
 
-    // تطبيق الشروط فقط في حال كان الوضع يتطلب المقارنة
     if (mode !== "none" && field.conditions) {
-      rowObj[field.fieldName] = evaluateConditions(
+      // تم استبدال evaluateConditions القديمة بـ evaluateFormulaCondition
+      rowObj[field.fieldName] = evaluateFormulaCondition(
         field,
         rowObj,
         valuesByFieldId,

@@ -104,7 +104,7 @@ export function GroupsTable({
         </div>
 
         {/* جدول المجموعات */}
-        <div className="table-responsive">
+        <div className="table-responsive overflow-visible">
           <table className="table table-hover align-middle border mb-0">
             <thead className="table-light">
               <tr>

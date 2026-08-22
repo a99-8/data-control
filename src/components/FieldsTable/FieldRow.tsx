@@ -171,7 +171,6 @@ export const FieldRow: React.FC<FieldRowProps> = ({
               onChange={(e) =>
                 onUpdateField(index, "conditions", e.target.value)
               }
-              placeholder='{"key": "value"}'
             />
           </td>
         </>

@@ -52,7 +52,13 @@ export function useSingleGroupActions(
 
         updated[idx] = {
           ...targetGroup,
+          name: parsed.name || targetGroup.name,
           fields: fields,
+          sections: parsed.sections || targetGroup.sections,
+          isInjectionGroup:
+            parsed.isInjectionGroup !== undefined
+              ? parsed.isInjectionGroup
+              : targetGroup.isInjectionGroup,
         };
 
         updateAndSaveGroups(updated);
@@ -78,13 +84,18 @@ export function useSingleGroupActions(
       skipEmptyLines: true,
       complete: (results) => {
         const importedFields: Field[] = results.data.map((row, fIdx) => ({
-          id: `fld_${Date.now()}_${fIdx}`,
-          enabled: row.enabled ?? true,
+          id: row.id || `fld_${Date.now()}_${fIdx}`,
+          enabled:
+            row.enabled !== undefined
+              ? String(row.enabled).toLowerCase() === "true" ||
+                row.enabled === true
+              : true,
           fieldName: row.fieldName || "",
           searchType: row.searchType || "elementId",
           searchValue: row.searchValue || "",
           inputValue: row.inputValue || "",
           conditions: row.conditions || "",
+          sectionId: row.sectionId || undefined,
         }));
 
         const updated = [...groups];

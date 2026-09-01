@@ -9,6 +9,7 @@ export function usePopupAction() {
   const { t } = useTranslation();
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedIdx, setSelectedIdx] = useState<string>("");
+  const [selectedSectionId, setSelectedSectionId] = useState<string>("");
   const [targetIdx, setTargetIdx] = useState<string>("");
   const { showAlert } = useModal();
 
@@ -122,6 +123,7 @@ export function usePopupAction() {
       const response = (await browser.tabs.sendMessage(tab.id, {
         action,
         group: sourceGroup,
+        sectionId: selectedSectionId || undefined,
       })) as ActionResponse;
 
       if (response?.status === "success") {
@@ -151,6 +153,8 @@ export function usePopupAction() {
     groups,
     selectedIdx,
     setSelectedIdx,
+    selectedSectionId,
+    setSelectedSectionId,
     targetIdx,
     setTargetIdx,
     handleExecute,

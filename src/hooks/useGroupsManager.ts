@@ -103,6 +103,102 @@ export function useGroupsManager() {
     reader.readAsText(file);
   };
 
+  // تصدير جميع المجموعات
+  const handleExportAllJSON = () => {
+    if (groups.length === 0) {
+      showAlert(
+        t("no_data_to_export") || "لا توجد بيانات للتصدير",
+        "warning",
+        t("warning"),
+      );
+      return;
+    }
+    const dataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(groups, null, 2));
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `all_groups_${Date.now()}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
+  // استيراد ملف يحتوي على كافة المجموعات أو مجموعة واحدة
+  const handleImportAllJSON = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target?.result as string);
+        let imported: Group[] = [];
+
+        if (Array.isArray(parsed)) {
+          imported = parsed;
+        } else if (parsed.groups && Array.isArray(parsed.groups)) {
+          imported = parsed.groups;
+        } else if (parsed.group) {
+          imported = [parsed.group];
+        } else if (parsed.fields && parsed.name) {
+          imported = [parsed];
+        }
+
+        if (imported.length === 0) {
+          showAlert(t("import_failed"), "danger", t("error"));
+          return;
+        }
+
+        updateAndSaveGroups([...groups, ...imported]);
+        showAlert(t("import_success"), "success", t("success"));
+      } catch {
+        showAlert(t("import_failed"), "danger", t("error"));
+      } finally {
+        e.target.value = "";
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
+  const handleToggleInjectionGroup = (
+    groupIdx: number,
+    isInjection: boolean,
+  ) => {
+    const updated = [...groups];
+    if (updated[groupIdx]) {
+      updated[groupIdx].isInjectionGroup = isInjection;
+      updateAndSaveGroups(updated);
+    }
+  };
+
+  const handleAddSection = (groupIdx: number, sectionName: string) => {
+    const updated = [...groups];
+    const group = updated[groupIdx];
+    if (group) {
+      group.sections = group.sections || [];
+      group.sections.push({
+        id: `sec_${Date.now()}`,
+        name: sectionName,
+      });
+      updateAndSaveGroups(updated);
+    }
+  };
+
+  const handleDeleteSection = (groupIdx: number, sectionId: string) => {
+    const updated = [...groups];
+    const group = updated[groupIdx];
+    if (group && group.sections) {
+      group.sections = group.sections.filter((s) => s.id !== sectionId);
+      // تفريغ الحقول التابعة للقسم المحذوف
+      group.fields.forEach((f) => {
+        if (f.sectionId === sectionId) delete f.sectionId;
+      });
+      updateAndSaveGroups(updated);
+    }
+  };
+
   return {
     groups,
     setGroups,
@@ -113,6 +209,10 @@ export function useGroupsManager() {
     handleDeleteGroup,
     handleDeleteAll,
     handleUpdateGroupName,
-    handleImportJSON,
+    handleExportAllJSON,
+    handleImportAllJSON,
+    handleToggleInjectionGroup,
+    handleAddSection,
+    handleDeleteSection,
   };
 }

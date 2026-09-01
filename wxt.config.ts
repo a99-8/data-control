@@ -9,6 +9,7 @@ export default defineConfig({
   vite: () => ({
     build: {
       modulePreload: false,
+      chunkSizeWarningLimit: 1200,
     },
   }),
 });

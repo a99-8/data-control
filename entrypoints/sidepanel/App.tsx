@@ -45,7 +45,6 @@ function SidePanel() {
 
   return (
     <div className="p-3 bg-dark text-white min-vh-100">
-      {/* زر التبديل بين اللغات في الأعلى */}
       <div className="d-flex justify-content-end mb-2">
         <button
           onClick={toggleLanguage}
@@ -59,10 +58,8 @@ function SidePanel() {
         </button>
       </div>
 
-      {/* Container موحد يجمع التفتيش واختيار المجموعات مع زر الإضافة */}
       <div className="card shadow-sm border-secondary bg-dark text-white mb-3">
         <div className="card-body p-3 d-flex flex-column gap-3">
-          {/* قسم زر الفحص واستعراض الخصائص */}
           <div>
             <button
               className={`btn ${inspecting ? "btn-warning" : "btn-primary"} w-100 mb-3 d-flex align-items-center justify-content-center gap-2 fw-bold`}
@@ -196,7 +193,6 @@ function SidePanel() {
 
           <hr className="border-secondary my-1" />
 
-          {/* قسم ربط المجموعة */}
           <div>
             <label className="form-label small fw-bold mb-2">
               {t("select_group_to_link")}

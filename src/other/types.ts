@@ -24,25 +24,7 @@ export type VariantType = "success" | "danger" | "warning" | "info";
 // --- Models ---
 export type VerificationMode = "none" | "extract_compare" | "compare_only";
 
-export interface Field {
-  id: string;
-  enabled?: boolean;
-  verificationMode?: VerificationMode; // بدلاً من extract?: boolean
-  fieldName: string;
-  searchType: SearchType;
-  searchValue: string;
-  inputValue: string;
-  conditions: any;
-}
-
-// بدلاً من إعادة تعريف TableField بنفس الخصائص:
 export type TableField = Required<Field>;
-
-export interface Group {
-  id: string;
-  name: string;
-  fields: Field[];
-}
 
 export interface InspectedElementData {
   elementId: string;
@@ -65,6 +47,32 @@ export interface ActionRequest {
   group?: Group;
   sourceGroup?: Group;
   targetGroup?: Group;
+  sectionId?: string; // إرسال قسم معين عند الحقن
+}
+
+export interface FieldSection {
+  id: string;
+  name: string;
+}
+
+export interface Group {
+  id: string;
+  name: string;
+  isInjectionGroup?: boolean; // خيار الحقن للمجموعة
+  fields: Field[];
+  sections?: FieldSection[]; // أقسام المجموعة
+}
+
+export interface Field {
+  id: string;
+  enabled?: boolean;
+  fieldName: string;
+  searchType: SearchType;
+  searchValue: string;
+  inputValue?: string; // قيمة الحقن
+  verificationMode?: VerificationMode;
+  conditions?: string;
+  sectionId?: string; // القسم التابع له الحقل
 }
 
 // --- Component Props ---
@@ -79,6 +87,7 @@ export interface FieldsTableProps {
 
 export interface ScanFieldsTableProps {
   fields: Field[];
+  sections?: FieldSection[];
   selectedIds: Set<string>;
   isAllSelected: boolean;
   toggleSelectAll: () => void;
@@ -97,6 +106,7 @@ export interface GroupsTableProps {
   onDeleteGroup: (idx: number) => void;
   onDeleteAll: () => void;
   onUpdateGroupName: (idx: number, name: string) => void;
+  onToggleInjectionGroup?: (idx: number, isInjection: boolean) => void;
   onImportJSON: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 

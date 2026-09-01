@@ -1,5 +1,5 @@
 {
-  "injection_extraction_settings": "إعدادات مجموعات الحقن والاستخراج",
+  "Injection and Extraction Group Settings": "إعدادات مجموعات الحقن والاستخراج",
   "comprehensive_data_tool": "أداة البيانات الشاملة",
   "select_source_group": "اختر المجموعة المصدر (الأساسية):",
   "select_group_placeholder": "-- اختر مجموعة --",
@@ -33,6 +33,7 @@
   "groups": "المجموعات",
   "add_group": "إضافة مجموعة",
   "import_json": "استيراد JSON",
+  "export_all_json": "تصدير الكل",
   "delete_all": "حذف الجميع",
   "group_name": "اسم المجموعة",
   "actions": "الإجراءات",
@@ -48,7 +49,7 @@
   "search_type": "نوع البحث",
   "injection_value": "قيمة الحقن",
   "verification_mode": "كيفية التحقق",
-  "conditions_json": "الشروط (JSON)",
+  "conditions": "الشروط",
   "save_changes": "حفظ التغييرات",
   "close": "إغلاق",
   "confirm": "تأكيد",
@@ -95,5 +96,13 @@
   "clipboard_copy_failed": "تعذر النسخ إلى الحافظة.",
   "group_not_specified": "لم يتم تحديد المجموعة.",
   "groups_data_incomplete": "بيانات المجموعات (المصدر/الهدف) غير مكتملة.",
-  "no_data_found_in_source_group": "لم يتم العثور على بيانات لاستخراجها من المجموعة المصدر."
+  "no_data_found_in_source_group": "لم يتم العثور على بيانات لاستخراجها من المجموعة المصدر.",
+  "edit_conditions": "تعديل الشروط",
+  "currently_editing": "جارٍ التعديل",
+  "edit_conditions_for_field": "تعديل الشروط للحقل: ({{fieldName}})",
+  "select_field_to_edit_conditions": "اختر حقلاً من الجدول عبر زر (تعديل الشروط) لتعديل الشروط الخاصة به",
+  "click_edit_conditions_placeholder": "اضغط على زر (تعديل الشروط) في أي صف من الجدول لتتمكن من التعديل هنا...",
+  "enter_conditions_placeholder": "أدخل الشروط هنا...",
+  "select_section_to_inject": "اختر القسم للحقن",
+  "all_sections_warning": "جميع الأقسام (تنبيه: سيتم حقن كافة الحقول)"
 }

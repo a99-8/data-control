@@ -10,8 +10,13 @@ import {
   FileJson,
   SlidersHorizontal,
   ArrowUpDown,
+  Syringe,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
+interface ExtendedGroupsTableCustomProps extends ExtendedGroupsTableProps {
+  onExportAllJSON?: () => void;
+}
 
 export function GroupsTable({
   groups,
@@ -21,12 +26,14 @@ export function GroupsTable({
   onDeleteGroup,
   onDeleteAll,
   onUpdateGroupName,
+  onToggleInjectionGroup,
   onImportJSON,
+  onExportAllJSON,
   onExportGroupJSON,
   onExportGroupCSV,
   onImportGroupJSON,
   onImportGroupCSV,
-}: ExtendedGroupsTableProps) {
+}: ExtendedGroupsTableCustomProps) {
   const { t, i18n } = useTranslation();
   const [openDropdownIdx, setOpenDropdownIdx] = useState<number | null>(null);
 
@@ -76,7 +83,6 @@ export function GroupsTable({
       </div>
 
       <div className="card-body pt-0">
-        {/* شريط الأدوات */}
         <div className="d-flex flex-wrap gap-2 mb-3">
           <button
             className="btn btn-primary d-inline-flex align-items-center gap-1"
@@ -84,6 +90,7 @@ export function GroupsTable({
           >
             <Plus size={18} /> {t("add_group")}
           </button>
+
           <label className="btn btn-outline-secondary m-0 cursor-pointer d-inline-flex align-items-center gap-1">
             <Upload size={18} /> {t("import_json")}
             <input
@@ -93,6 +100,14 @@ export function GroupsTable({
               onChange={onImportJSON}
             />
           </label>
+
+          <button
+            className="btn btn-outline-success d-inline-flex align-items-center gap-1"
+            onClick={onExportAllJSON}
+          >
+            <Download size={18} /> {t("export_all_json") || "تصدير الكل"}
+          </button>
+
           <button
             className={`btn btn-outline-danger d-inline-flex align-items-center gap-1 ${
               isRtl ? "me-auto" : "ms-auto"
@@ -103,20 +118,24 @@ export function GroupsTable({
           </button>
         </div>
 
-        {/* جدول المجموعات */}
         <div className="table-responsive overflow-visible">
           <table className="table table-hover align-middle border mb-0">
             <thead className="table-light">
               <tr>
-                {/* تم نقل العرض إلى فئات Bootstrap والـ CSS */}
                 <th className="col-group-name">{t("group_name")}</th>
+                <th className="text-center" style={{ width: "120px" }}>
+                  <span className="d-flex align-items-center justify-content-center gap-1">
+                    <Syringe size={14} className="text-primary" />
+                    <span>حقن؟</span>
+                  </span>
+                </th>
                 <th className="col-actions text-center">{t("actions")}</th>
               </tr>
             </thead>
             <tbody>
               {groups.length === 0 ? (
                 <tr>
-                  <td colSpan={2} className="text-center py-4 text-muted">
+                  <td colSpan={3} className="text-center py-4 text-muted">
                     {t("no_groups_added") ||
                       "لا توجد مجموعات. أضف مجموعة جديدة"}
                   </td>
@@ -133,7 +152,6 @@ export function GroupsTable({
                         isActive ? "table-active custom-active-row" : ""
                       }
                     >
-                      {/* عمود اسم المجموعة */}
                       <td>
                         <input
                           type="text"
@@ -148,10 +166,23 @@ export function GroupsTable({
                         />
                       </td>
 
-                      {/* عمود الإجراءات */}
+                      <td className="text-center">
+                        <div className="form-check form-switch d-flex justify-content-center m-0">
+                          <input
+                            className="form-check-input cursor-pointer"
+                            type="checkbox"
+                            role="switch"
+                            checked={grp.isInjectionGroup ?? false}
+                            onChange={(e) =>
+                              onToggleInjectionGroup?.(idx, e.target.checked)
+                            }
+                            title="تفعيل خيار الحقن لإظهار قيمة الحقن والتحقق"
+                          />
+                        </div>
+                      </td>
+
                       <td className="text-center">
                         <div className="d-flex flex-wrap align-items-center justify-content-center gap-1">
-                          {/* قائمة الاستيراد/التصدير */}
                           <div
                             ref={isOpen ? dropdownRef : null}
                             className="position-relative d-inline-block"
@@ -166,7 +197,6 @@ export function GroupsTable({
                             </button>
 
                             {isOpen && (
-                              /* تم تحويل التنسيقات المباشرة إلى الفئة custom-dropdown-menu */
                               <ul className="dropdown-menu show shadow-lg custom-dropdown-menu">
                                 <li>
                                   <label className="dropdown-item d-flex align-items-center gap-2 cursor-pointer m-0 dark-item">
@@ -231,7 +261,6 @@ export function GroupsTable({
                             )}
                           </div>
 
-                          {/* زر الحقول */}
                           <button
                             className="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1"
                             onClick={() => onSelectGroup(idx)}
@@ -243,7 +272,6 @@ export function GroupsTable({
                             </span>
                           </button>
 
-                          {/* زر الحذف */}
                           <button
                             type="button"
                             className="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1"

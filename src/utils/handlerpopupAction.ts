@@ -122,13 +122,9 @@ function copyUsingExecCommand(text: string): boolean {
   }
 }
 
-export function handleInjectData(request: ActionRequest): ActionResponse {
-  if (!request.group) {
-    return { status: "error", message: i18n.t("group_not_specified") };
-  }
-
-  const injectedCount = injectGroupData(request.group);
-  return { status: "success", count: injectedCount };
+export function handleInjectData(req: { group: Group; sectionId?: string }) {
+  const count = injectGroupData(req.group, req.sectionId);
+  return { status: "success", count };
 }
 
 export async function handleTransferData(

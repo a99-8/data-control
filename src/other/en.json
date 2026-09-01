@@ -1,5 +1,4 @@
 {
-  "injection_extraction_settings": "Injection and Extraction Group Settings",
   "comprehensive_data_tool": "Comprehensive Data Tool",
   "select_source_group": "Select Source Group (Primary):",
   "select_group_placeholder": "-- Select a Group --",
@@ -33,6 +32,7 @@
   "groups": "Groups",
   "add_group": "Add Group",
   "import_json": "Import JSON",
+  "export_all_json": "export all json",
   "delete_all": "Delete All",
   "group_name": "Group Name",
   "actions": "Actions",
@@ -48,7 +48,7 @@
   "search_type": "Search Type",
   "injection_value": "Injection Value",
   "verification_mode": "verification mode",
-  "conditions_json": "Conditions (JSON)",
+  "conditions": "Conditions",
   "save_changes": "Save Changes",
   "close": "Close",
   "confirm": "Confirm",
@@ -95,5 +95,13 @@
   "clipboard_copy_failed": "Failed to copy to clipboard.",
   "group_not_specified": "Group not specified.",
   "groups_data_incomplete": "Groups data (source/target) is incomplete.",
-  "no_data_found_in_source_group": "No data found to extract from the source group."
+  "no_data_found_in_source_group": "No data found to extract from the source group.",
+  "edit_conditions": "Edit Conditions",
+  "currently_editing": "Editing",
+  "edit_conditions_for_field": "Edit conditions for field: ({{fieldName}})",
+  "select_field_to_edit_conditions": "Select a field from the table using the (Edit Conditions) button to modify its conditions",
+  "click_edit_conditions_placeholder": "Click the (Edit Conditions) button on any row to edit here...",
+  "enter_conditions_placeholder": "Enter conditions here...",
+  "select_section_to_inject": "Select Section for Injection",
+  "all_sections_warning": "All Sections (Warning: will inject all fields)"
 }

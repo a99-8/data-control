@@ -2,7 +2,7 @@ import { useSingleGroupActions } from "@/src/hooks/useSingleGroupActions";
 import { useGroupsManager } from "@/src/hooks/useGroupsManager";
 import { useFieldsManager } from "@/src/hooks/useFieldsManager";
 import { GroupsTable } from "@/src/components/GroupsTable";
-import { FieldsTable } from "@/src/components/FieldsTable";
+import { FullFieldsTable } from "@/src/components/FieldsTable/FullFieldsTable";
 import { ModalProvider } from "@/src/components/ModalContext";
 import { Sparkles, Globe } from "lucide-react";
 import "@/src/other/style.css";
@@ -18,15 +18,19 @@ function OptionsContent() {
 
   const {
     groups,
-    setGroups,
     activeGroupIdx,
     setActiveGroupIdx,
-    updateAndSaveGroups,
     handleAddGroup,
     handleDeleteGroup,
     handleDeleteAll,
     handleUpdateGroupName,
-    handleImportJSON,
+    handleToggleInjectionGroup,
+    handleAddSection,
+    handleDeleteSection,
+    handleExportAllJSON,
+    handleImportAllJSON,
+    updateAndSaveGroups,
+    setGroups,
   } = useGroupsManager();
 
   const {
@@ -46,13 +50,11 @@ function OptionsContent() {
   } = useFieldsManager(groups, activeGroupIdx, setGroups, updateAndSaveGroups);
 
   return (
-    /* تم إزالة style واستبدال الحاوية بـ container-xxl لتطبيق maxWidth تلقائياً مع px-4 */
     <div className="container-xxl px-4 py-4">
-      {/* شريط العنوان */}
       <div className="page-title-bar mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h3 className="m-0 d-flex align-items-center gap-2">
           <Sparkles size={20} className="text-warning" />
-          <span>{t("injection_extraction_settings")}</span>
+          <span>{t("Injection and Extraction Group Settings")}</span>
         </h3>
         <button
           onClick={toggleLanguage}
@@ -66,7 +68,6 @@ function OptionsContent() {
         </button>
       </div>
 
-      {/* جدول المجموعات */}
       <div className="mb-4">
         <GroupsTable
           groups={groups}
@@ -76,7 +77,9 @@ function OptionsContent() {
           onDeleteGroup={handleDeleteGroup}
           onDeleteAll={handleDeleteAll}
           onUpdateGroupName={handleUpdateGroupName}
-          onImportJSON={handleImportJSON}
+          onToggleInjectionGroup={handleToggleInjectionGroup}
+          onImportJSON={handleImportAllJSON}
+          onExportAllJSON={handleExportAllJSON}
           onExportGroupJSON={handleExportGroupJSON}
           onExportGroupCSV={handleExportGroupCSV}
           onImportGroupJSON={handleImportGroupJSON}
@@ -84,17 +87,24 @@ function OptionsContent() {
         />
       </div>
 
-      {/* جدول الحقول */}
       {activeGroup && (
         <div className="mt-4">
-          <FieldsTable
+          <FullFieldsTable
             fields={activeGroup.fields || []}
+            activeGroup={activeGroup}
             activeGroupName={activeGroup.name}
             onAddField={handleAddField}
             onUpdateField={handleUpdateField}
             onDeleteField={handleDeleteField}
             onSaveFields={handleSaveFields}
             onMoveField={handleMoveField}
+            onAddSection={(name) =>
+              activeGroupIdx !== null && handleAddSection(activeGroupIdx, name)
+            }
+            onDeleteSection={(secId) =>
+              activeGroupIdx !== null &&
+              handleDeleteSection(activeGroupIdx, secId)
+            }
           />
         </div>
       )}

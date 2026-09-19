@@ -103,5 +103,14 @@
   "click_edit_conditions_placeholder": "Click the (Edit Conditions) button on any row to edit here...",
   "enter_conditions_placeholder": "Enter conditions here...",
   "select_section_to_inject": "Select Section for Injection",
-  "all_sections_warning": "All Sections (Warning: will inject all fields)"
+  "all_sections_warning": "All Sections (Warning: will inject all fields)",
+  "field_options": "Field Options",
+  "settings_and_details": "Settings & Details",
+  "field_options_and_conditions": "Field Options & Conditions",
+  "no_section": "(No Section)",
+  "group_sections_multi_injection": "Group Sections (Multi-part Injection)",
+  "new_section_name_placeholder": "New section name (e.g., Section 1)",
+  "add_section": "Add Section",
+  "extract_and_compare": "Extract & Compare",
+  "compare_only": "Compare Only"
 }

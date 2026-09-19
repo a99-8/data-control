@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import type { Group, Field } from "@/src/other/types";
-import { Plus, Save, Edit, Layers, Trash2 } from "lucide-react";
+import { Plus, Save, Layers, Edit } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FieldRow } from "./FieldRow";
+import { FieldDetailsSidebar } from "./FieldDetailsSidebar";
 
 interface FullFieldsTableProps {
   fields: Field[];
@@ -52,7 +53,7 @@ export const FullFieldsTable: React.FC<FullFieldsTableProps> = ({
   };
 
   return (
-    <div className="card border-secondary bg-dark text-white shadow-sm">
+    <div className="card border-secondary bg-dark text-white shadow-sm position-relative">
       <div className="card-header py-3 d-flex justify-content-between align-items-center bg-dark border-secondary">
         <h5 className="card-title fw-bold text-primary m-0">
           {`${t("configure_fields_for_group")}: (${activeGroup?.name || activeGroupName || ""})`}
@@ -66,16 +67,16 @@ export const FullFieldsTable: React.FC<FullFieldsTableProps> = ({
       </div>
 
       <div className="card-body">
-        {/* قسم إدارة أجزاء/أقسام المجموعة */}
+        {/* 1. قسم إدارة أقسام المجموعة */}
         <div className="mb-4 p-3 bg-secondary bg-opacity-10 rounded border border-secondary">
           <label className="form-label d-flex align-items-center gap-2 fw-bold text-warning mb-2">
-            <Layers size={16} /> أقسام المجموعة (الحقن متعدد الأقسام)
+            <Layers size={16} /> {t("group_sections_multi_injection")}
           </label>
           <div className="d-flex flex-wrap gap-2 align-items-center mb-2">
             <input
               type="text"
               className="form-control form-control-sm bg-dark text-white border-secondary w-auto"
-              placeholder="اسم القسم الجديد (مثلاً: القسم الأول)"
+              placeholder={t("new_section_name_placeholder")}
               value={newSectionName}
               onChange={(e) => setNewSectionName(e.target.value)}
             />
@@ -84,7 +85,7 @@ export const FullFieldsTable: React.FC<FullFieldsTableProps> = ({
               className="btn btn-warning btn-sm fw-bold d-inline-flex align-items-center gap-1"
               onClick={handleCreateSection}
             >
-              <Plus size={14} /> إضافة قسم
+              <Plus size={14} /> {t("add_section")}
             </button>
           </div>
           {sections.length > 0 && (
@@ -107,6 +108,7 @@ export const FullFieldsTable: React.FC<FullFieldsTableProps> = ({
           )}
         </div>
 
+        {/* 2. قسم تعديل الشروط (أعلى الصفحة كما كان سابقاً) */}
         <div className="mb-3 p-3 text-body">
           <label className="form-label d-flex align-items-center gap-2 fw-bold text-info mb-2">
             <Edit size={16} />
@@ -145,63 +147,108 @@ export const FullFieldsTable: React.FC<FullFieldsTableProps> = ({
           />
         </div>
 
-        <div className="table-responsive mb-2">
-          <table className="table table-dark table-bordered table-hover align-middle mb-0">
-            <thead className="table-dark border-secondary text-center">
-              <tr>
-                <th className="col-order">{t("order")}</th>
-                <th className="col-field-id">ID</th>
-                <th className="col-toggle">{t("enable")}</th>
-                {sections.length > 0 && <th>القسم</th>}
-                <th className="col-field-name">{t("field_name")}</th>
-                <th className="col-search-type">{t("search_type")}</th>
-                <th className="col-selector">{t("element_selector")}</th>
-                {isInjectionGroup && (
-                  <>
-                    <th className="col-injection">{t("injection_value")}</th>
-                    <th className="col-verification">
-                      {t("verification_mode")}
-                    </th>
-                  </>
-                )}
-                <th className="col-conditions">{t("conditions")}</th>
-                <th className="col-action-sm">{t("delete")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fields.length === 0 ? (
+        {/* 3. حاوية الجدول والشريط الجانبي */}
+        <div className="d-flex gap-3 align-items-start">
+          {/* الجدول يأخذ باقي المساحة المتاحة flex-grow-1 */}
+          <div
+            className="table-responsive flex-grow-1 w-100"
+            style={{ minWidth: 0 }}
+          >
+            <table className="table table-dark table-bordered table-hover align-middle mb-0">
+              <thead className="table-dark border-secondary text-center">
                 <tr>
-                  <td colSpan={11} className="text-center py-4">
-                    {t("no_fields_in_table")}
-                  </td>
+                  <th
+                    className="col-order"
+                    style={{ width: "65px", whiteSpace: "nowrap" }}
+                  >
+                    {t("order")}
+                  </th>
+                  <th
+                    className="col-field-id"
+                    style={{ width: "1%", whiteSpace: "nowrap" }}
+                  >
+                    ID
+                  </th>
+                  <th
+                    className="col-toggle"
+                    style={{ width: "1%", whiteSpace: "nowrap" }}
+                  >
+                    {t("enable")}
+                  </th>
+                  {sections.length > 0 && (
+                    <th
+                      style={{
+                        width: "170px",
+                        minWidth: "170px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      القسم
+                    </th>
+                  )}
+                  <th className="col-field-name" style={{ width: "auto" }}>
+                    {t("field_name")}
+                  </th>
+                  <th
+                    className="col-conditions"
+                    style={{ width: "1%", whiteSpace: "nowrap" }}
+                  >
+                    {t("settings_and_details")}
+                  </th>
+                  <th
+                    className="col-action-sm"
+                    style={{ width: "1%", whiteSpace: "nowrap" }}
+                  >
+                    {t("delete")}
+                  </th>
                 </tr>
-              ) : (
-                fields.map((field, index) => (
-                  <FieldRow
-                    key={field.id}
-                    field={field}
-                    index={index}
-                    totalLength={fields.length}
-                    compact={false}
-                    isInjectionGroup={isInjectionGroup}
-                    sections={sections}
-                    isEditingConditions={activeEditIndex === index}
-                    onSelectForEdit={() =>
-                      setActiveEditIndex(
-                        activeEditIndex === index ? null : index,
-                      )
-                    }
-                    onUpdateField={onUpdateField}
-                    onDeleteField={(i) => {
-                      if (activeEditIndex === i) setActiveEditIndex(null);
-                      onDeleteField(i);
-                    }}
-                    onMoveField={onMoveField}
-                  />
-                ))
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {fields.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-4">
+                      {t("no_fields_in_table")}
+                    </td>
+                  </tr>
+                ) : (
+                  fields.map((field, index) => (
+                    <FieldRow
+                      key={field.id}
+                      field={field}
+                      index={index}
+                      totalLength={fields.length}
+                      compact={false}
+                      isInjectionGroup={isInjectionGroup}
+                      sections={sections}
+                      isEditingConditions={activeEditIndex === index}
+                      onSelectForEdit={() =>
+                        setActiveEditIndex(
+                          activeEditIndex === index ? null : index,
+                        )
+                      }
+                      onUpdateField={onUpdateField}
+                      onDeleteField={(i) => {
+                        if (activeEditIndex === i) setActiveEditIndex(null);
+                        onDeleteField(i);
+                      }}
+                      onMoveField={onMoveField}
+                    />
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* الشريط الجانبي الثابت أثنـاء النزول */}
+          {currentEditingIndex !== null && currentField && (
+            <FieldDetailsSidebar
+              field={currentField}
+              index={currentEditingIndex}
+              isInjectionGroup={isInjectionGroup}
+              onUpdateField={onUpdateField}
+              onClose={() => setActiveEditIndex(null)}
+            />
+          )}
         </div>
 
         {onSaveFields && (

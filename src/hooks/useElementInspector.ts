@@ -1,5 +1,72 @@
 import { browser } from "wxt/browser";
-import i18n from "@/src/i18n"; // تأكد من مسار استدعاء i18n لديك
+import i18n from "@/src/i18n";
+import { querySelectorDeep } from "query-selector-shadow-dom"; // استيراد المكتبة
+
+/**
+ * دالة مساعدة لتوليد CSS Selector دقيق ودعام للـ Shadow DOM
+ */
+const generateCssSelector = (el: HTMLElement): string => {
+  if (!el || el.nodeType !== Node.ELEMENT_NODE) return "";
+
+  // 1. إذا كان لديه ID فريد
+  if (el.id) {
+    const idSelector = `#${CSS.escape(el.id)}`;
+    // التأكد من أن الـ ID يحدد عنصراً فريداً
+    if (document.querySelectorAll(idSelector).length === 1) {
+      return idSelector;
+    }
+  }
+
+  // 2. استخدام الميزات الشهيرة لأدوات الإدخال والسيطرة
+  const formControlName = el.getAttribute("formcontrolname");
+  if (formControlName) {
+    return `[formcontrolname="${CSS.escape(formControlName)}"]`;
+  }
+
+  const nameAttr = el.getAttribute("name");
+  if (nameAttr) {
+    return `[name="${CSS.escape(nameAttr)}"]`;
+  }
+
+  // 3. بناء المسار الشجري والهيكلي
+  const path: string[] = [];
+  let current: HTMLElement | null = el;
+
+  while (current && current.nodeType === Node.ELEMENT_NODE) {
+    let selector = current.nodeName.toLowerCase();
+
+    if (current.id) {
+      selector += `#${CSS.escape(current.id)}`;
+      path.unshift(selector);
+      break; // المعرف كافٍ لإيقاف صعود الشجرة
+    } else {
+      // حساب الترتيب بين الإخوة (Siblings)
+      let sibling = current.previousElementSibling;
+      let index = 1;
+      while (sibling) {
+        if (sibling.nodeName.toLowerCase() === selector) {
+          index++;
+        }
+        sibling = sibling.previousElementSibling;
+      }
+      if (index > 1) {
+        selector += `:nth-of-type(${index})`;
+      }
+    }
+
+    path.unshift(selector);
+
+    // التعامل مع الانتقال عبر الـ Shadow Root إذا كان العنصر داخل Shadow DOM
+    const parent = current.parentNode;
+    if (parent instanceof ShadowRoot) {
+      current = parent.host as HTMLElement; // الصعود إلى العنصر المضيف للـ Shadow
+    } else {
+      current = parent as HTMLElement | null;
+    }
+  }
+
+  return path.join(" > ");
+};
 
 export function useElementInspector() {
   let isInspecting = false;
@@ -44,6 +111,8 @@ export function useElementInspector() {
     modifiedDisabledElements = [];
   };
 
+  // useElementInspector.ts [تعديل دالة getElementProperties]
+
   const getElementProperties = (target: HTMLElement) => {
     const elementId = target.id || null;
 
@@ -76,12 +145,53 @@ export function useElementInspector() {
       elementPlaceholder = target.getAttribute("placeholder") || null;
     }
 
+    // --- استخراج الـ Label المرتبط بالعنصر ---
+    let elementLabel: string | null = null;
+
+    // 1. البحث عبر عنصر label يحتوي على خاصية for
+    if (elementId) {
+      const labelEl = document.querySelector<HTMLLabelElement>(
+        `label[for="${CSS.escape(elementId)}"]`,
+      );
+      if (labelEl) elementLabel = labelEl.textContent?.trim() || null;
+    }
+
+    // 2. البحث عن label أقرب في الشجرة (Parent Label)
+    if (!elementLabel) {
+      const parentLabel = target.closest("label");
+      if (parentLabel) {
+        // جلب النص الخاص بالـ label مع استبعاد نص حقل الإدخال نفسه
+        const clone = parentLabel.cloneNode(true) as HTMLElement;
+        clone
+          .querySelectorAll("input, select, textarea")
+          .forEach((child) => child.remove());
+        elementLabel = clone.textContent?.trim() || null;
+      }
+    }
+
+    // 3. البحث عبر aria-labelledby
+    if (!elementLabel) {
+      const ariaLabelledBy = target.getAttribute("aria-labelledby");
+      if (ariaLabelledBy) {
+        const labelledEl = document.getElementById(ariaLabelledBy);
+        if (labelledEl) elementLabel = labelledEl.textContent?.trim() || null;
+      }
+    }
+
+    // 4. البحث عبر aria-label المباشر
+    if (!elementLabel) {
+      elementLabel = target.getAttribute("aria-label") || null;
+    }
+
+    const cssSelector = generateCssSelector(target);
     const noneText = i18n.t("none");
 
     return {
       elementId: elementId || noneText,
       formControlName: formControlName || noneText,
       elementPlaceholder: elementPlaceholder || noneText,
+      elementLabel: elementLabel || noneText, // <-- تمت إضافة خاصية Label هنا
+      cssSelector: cssSelector || noneText,
     };
   };
 
@@ -101,10 +211,18 @@ export function useElementInspector() {
 
       const payload = getElementProperties(inputElement);
 
-      browser.runtime.sendMessage({
-        action: "ELEMENT_INSPECTED",
-        payload,
-      });
+      try {
+        browser.runtime
+          .sendMessage({
+            action: "ELEMENT_INSPECTED",
+            payload,
+          })
+          .catch(() => {
+            // تجاهل خطأ عدم وجود مستمع
+          });
+      } catch (err) {
+        // Catch synchronous exceptions
+      }
     }
 
     stopInspecting();

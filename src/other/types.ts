@@ -7,7 +7,8 @@ export type SearchType =
   | "elementPlaceholder"
   | "formControlName"
   | "defaultValue"
-  | "cssSelector";
+  | "cssSelector"
+  | "elementLabel";
 
 export type ActionType =
   | "SCRAPE_DATA"
@@ -30,6 +31,8 @@ export interface InspectedElementData {
   elementId: string;
   formControlName: string;
   elementPlaceholder: string;
+  cssSelector?: string;
+  elementLabel?: string;
 }
 
 // --- API & Actions ---

@@ -3,6 +3,7 @@ import { Search, Plus, Globe } from "lucide-react";
 import { ModalProvider } from "@/src/components/ModalContext";
 import { useTranslation } from "react-i18next";
 import { FieldsTable } from "@/src/components/FieldsTable";
+import { GroupSelect } from "@/src/components/GroupSelect";
 
 function SidePanel() {
   const { t, i18n } = useTranslation();
@@ -166,6 +167,34 @@ function SidePanel() {
                       }
                     />
                   </label>
+                  <label
+                    className={`d-flex justify-content-between align-items-center p-2 rounded cursor-pointer border ${
+                      selectedAttribute === "cssSelector"
+                        ? "border-primary bg-secondary bg-opacity-50"
+                        : "bg-secondary bg-opacity-25 border-transparent"
+                    }`}
+                  >
+                    <div className="text-start overflow-hidden me-2">
+                      <small className="text-light d-block text-uppercase fw-semibold">
+                        cssSelector
+                      </small>
+                      <span className="fw-bold text-white text-break">
+                        {formatInspectedValue(inspectedData.cssSelector)}
+                      </span>
+                    </div>
+                    <input
+                      type="radio"
+                      name="inspectedAttribute"
+                      className="form-check-input"
+                      checked={selectedAttribute === "cssSelector"}
+                      disabled={
+                        !inspectedData.cssSelector ||
+                        inspectedData.cssSelector === "لا يوجد" ||
+                        inspectedData.cssSelector === "None"
+                      }
+                      onChange={() => setSelectedAttribute("cssSelector")}
+                    />
+                  </label>
                 </div>
 
                 <div className="row g-2">
@@ -197,18 +226,15 @@ function SidePanel() {
             <label className="form-label small fw-bold mb-2">
               {t("select_group_to_link")}
             </label>
-            <select
-              className="form-select form-select-sm bg-dark text-white border-secondary mb-3"
-              value={selectedGroupIdx}
-              onChange={(e) => setSelectedGroupIdx(e.target.value)}
-            >
-              <option value="">{t("select_group_placeholder")}</option>
-              {groups.map((grp, idx) => (
-                <option key={grp.id} value={idx}>
-                  {grp.name}
-                </option>
-              ))}
-            </select>
+
+            <GroupSelect
+              groups={groups}
+              selectedValue={selectedGroupIdx}
+              onValueChange={(val) => setSelectedGroupIdx(val)}
+              placeholder={t("select_group_placeholder")}
+              noGroupsText={t("no_groups_available")}
+              dir={i18n.language.startsWith("ar") ? "rtl" : "ltr"}
+            />
 
             <button
               className="btn btn-primary fw-bold w-100 d-flex align-items-center justify-content-center gap-2"

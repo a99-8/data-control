@@ -104,5 +104,14 @@
   "click_edit_conditions_placeholder": "اضغط على زر (تعديل الشروط) في أي صف من الجدول لتتمكن من التعديل هنا...",
   "enter_conditions_placeholder": "أدخل الشروط هنا...",
   "select_section_to_inject": "اختر القسم للحقن",
-  "all_sections_warning": "جميع الأقسام (تنبيه: سيتم حقن كافة الحقول)"
+  "all_sections_warning": "جميع الأقسام (تنبيه: سيتم حقن كافة الحقول)",
+  "field_options": "خيارات الحقل",
+  "settings_and_details": "التفاصيل",
+  "field_options_and_conditions": "الخيارات",
+  "no_section": "(بدون قسم)",
+  "group_sections_multi_injection": "أقسام المجموعة (الحقن متعدد الأقسام)",
+  "new_section_name_placeholder": "اسم القسم الجديد (مثلاً: القسم الأول)",
+  "add_section": "إضافة قسم",
+  "extract_and_compare": "استخرج ثم قارن",
+  "compare_only": "قارن فقط"
 }

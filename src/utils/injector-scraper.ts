@@ -1,8 +1,9 @@
 import type { Field, Group } from "@/src/other/types";
 import { evaluateFormulaCondition } from "./hyperformula-evaluator";
+import { findInputElement, injectSingleField } from "@/src/utils";
 
 // دالة مساعدة لاستخراج النص/القيمة من عنصر فردي
-function getNodeValue(targetNode: HTMLElement): string {
+export function getNodeValue(targetNode: HTMLElement): string {
   if (targetNode instanceof HTMLSelectElement) {
     const currentValue = targetNode.value ? targetNode.value.trim() : "";
     let selectedOpt = Array.from(targetNode.options).find(
@@ -57,53 +58,6 @@ function getNodeValue(targetNode: HTMLElement): string {
   }
 
   return targetNode.textContent || "";
-}
-
-// دالة مساعدة لتحديد عناصر الإدخال
-function findInputElement(field: Field): HTMLElement[] {
-  const val = (field.searchValue || "").trim();
-  if (!val) return [];
-
-  const selectors: Record<string, () => HTMLElement[]> = {
-    elementId: () => {
-      const cleanId = val.startsWith("#") ? val.substring(1) : val;
-      const el = document.getElementById(cleanId);
-      return el ? [el] : [];
-    },
-    regexId: () => {
-      try {
-        const pattern =
-          val.includes("*") && !val.includes(".*")
-            ? val.replace(/\*/g, ".*")
-            : val;
-        const regex = new RegExp(`^${pattern}$`);
-        return Array.from(
-          document.querySelectorAll<HTMLElement>("[id]"),
-        ).filter((el) => regex.test(el.id));
-      } catch {
-        return [];
-      }
-    },
-    formControlName: () =>
-      Array.from(
-        document.querySelectorAll(`[formcontrolname="${CSS.escape(val)}"]`),
-      ),
-    elementPlaceholder: () =>
-      Array.from(
-        document.querySelectorAll(
-          `input[placeholder="${CSS.escape(val)}"], textarea[placeholder="${CSS.escape(val)}"]`,
-        ),
-      ),
-    cssSelector: () => {
-      try {
-        return Array.from(document.querySelectorAll<HTMLElement>(val));
-      } catch (e) {
-        return [];
-      }
-    },
-  };
-
-  return selectors[field.searchType]?.() || [];
 }
 
 export function extractGroupData(group: Group): Record<string, any>[] {
@@ -163,163 +117,6 @@ export function extractGroupData(group: Group): Record<string, any>[] {
   );
 }
 
-// دالة مساعدة لحقن حقل واحد
-function injectSingleField(field: Field): boolean {
-  const targetNodes = findInputElement(field);
-  if (targetNodes.length === 0) return false;
-
-  const valueToInject =
-    field.inputValue !== undefined ? String(field.inputValue).trim() : "";
-
-  targetNodes.forEach((node) => {
-    // 1. التعامل مع قوائم Multi-Select الخاصة
-    const rootContainer = node.closest(".multi-select-react-and-mob-root");
-    if (rootContainer) {
-      const targetValues = valueToInject
-        .split(",")
-        .map((v) => v.trim().toLowerCase());
-
-      const listItems = rootContainer.querySelectorAll<HTMLElement>(
-        ".multi-select-react-and-mob-dropdown-menu-item",
-      );
-
-      listItems.forEach((item) => {
-        const checkbox = item.querySelector<HTMLInputElement>(
-          "input[type='checkbox']",
-        );
-        const label = item.textContent?.trim().toLowerCase() || "";
-        if (checkbox && label) {
-          const shouldBeChecked = targetValues.includes(label);
-          if (checkbox.checked !== shouldBeChecked) {
-            checkbox.click();
-          }
-        }
-      });
-
-      const promptBar = rootContainer.querySelector<HTMLElement>(
-        ".multi-select-react-and-mob-dropdown-bar-prompt",
-      );
-      if (promptBar) {
-        promptBar.textContent = valueToInject;
-      }
-      return;
-    }
-
-    // 2. التعامل مع Checkbox / Radio
-    if (
-      node instanceof HTMLInputElement &&
-      (node.type === "checkbox" || node.type === "radio")
-    ) {
-      const isTrue = ["true", "1", "yes", "نعم", "on"].includes(
-        valueToInject.toLowerCase(),
-      );
-
-      if (node.type === "checkbox") {
-        if (node.checked !== isTrue) node.click();
-      } else if (node.type === "radio") {
-        if (
-          node.value.trim().toLowerCase() === valueToInject.toLowerCase() ||
-          isTrue
-        ) {
-          if (!node.checked) node.click();
-        }
-      }
-      return;
-    }
-
-    // 3. التعامل مع القوائم المنسدلة HTML Select
-    if (node instanceof HTMLSelectElement) {
-      const targetValues = valueToInject
-        .split(",")
-        .map((v) => v.trim().toLowerCase());
-
-      if (node.multiple) {
-        Array.from(node.options).forEach((opt) => {
-          const optVal = opt.value.trim().toLowerCase();
-          const optText = opt.text.trim().toLowerCase();
-          opt.selected =
-            targetValues.includes(optVal) || targetValues.includes(optText);
-        });
-      } else {
-        const matchedOption = Array.from(node.options).find(
-          (opt) =>
-            opt.value.trim().toLowerCase() === valueToInject.toLowerCase() ||
-            opt.text.trim().toLowerCase() === valueToInject.toLowerCase(),
-        );
-        if (matchedOption) {
-          node.value = matchedOption.value;
-        }
-      }
-
-      node.dispatchEvent(new Event("change", { bubbles: true }));
-      return;
-    }
-
-    // 4. التعامل مع حقول الإدخال النصية Input و Textarea
-    if (
-      node instanceof HTMLInputElement ||
-      node instanceof HTMLTextAreaElement
-    ) {
-      node.focus();
-
-      let finalValue = valueToInject;
-      if (
-        node instanceof HTMLInputElement &&
-        (node.type === "number" ||
-          /^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(valueToInject))
-      ) {
-        const sanitized = valueToInject.replace(/,/g, "");
-        if (!isNaN(Number(sanitized))) {
-          finalValue = sanitized;
-        }
-      }
-
-      const prototype =
-        node instanceof HTMLTextAreaElement
-          ? window.HTMLTextAreaElement.prototype
-          : window.HTMLInputElement.prototype;
-
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-        prototype,
-        "value",
-      )?.set;
-
-      if (nativeInputValueSetter) {
-        nativeInputValueSetter.call(node, finalValue);
-      } else {
-        node.value = finalValue;
-      }
-
-      node.dispatchEvent(new Event("input", { bubbles: true }));
-      node.dispatchEvent(new Event("change", { bubbles: true }));
-      node.dispatchEvent(new Event("blur", { bubbles: true }));
-      return;
-    }
-
-    // 5. العناصر القابلة للتعديل ContentEditable
-    if (node.isContentEditable) {
-      node.focus();
-      node.innerText = valueToInject;
-      node.dispatchEvent(new Event("input", { bubbles: true }));
-      node.dispatchEvent(new Event("change", { bubbles: true }));
-      node.dispatchEvent(new Event("blur", { bubbles: true }));
-      return;
-    }
-
-    // 6. الحالات الافتراضية
-    if ("value" in node) {
-      (node as any).value = valueToInject;
-    } else {
-      node.textContent = valueToInject;
-    }
-
-    node.dispatchEvent(new Event("input", { bubbles: true }));
-    node.dispatchEvent(new Event("change", { bubbles: true }));
-  });
-
-  return true;
-}
-
 export function injectGroupData(group: Group, sectionId?: string): number {
   if (group.isInjectionGroup === false) return 0;
 
@@ -353,8 +150,8 @@ export function injectGroupData(group: Group, sectionId?: string): number {
   }
 
   let count = 0;
-  fieldsToInject.forEach((field) => {
-    if (injectSingleField(field)) {
+  fieldsToInject.forEach(async (field) => {
+    if (await injectSingleField(field)) {
       count++;
     }
   });

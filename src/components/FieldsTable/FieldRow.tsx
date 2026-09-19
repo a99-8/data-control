@@ -1,10 +1,5 @@
 import React from "react";
-import type {
-  Field,
-  SearchType,
-  VerificationMode,
-  FieldSection,
-} from "@/src/other/types";
+import type { Field, FieldSection } from "@/src/other/types";
 import { Trash2, Edit3, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -29,7 +24,6 @@ export const FieldRow: React.FC<FieldRowProps> = ({
   index,
   totalLength,
   compact,
-  isInjectionGroup = true,
   sections = [],
   isSelected,
   isEditingConditions,
@@ -49,7 +43,10 @@ export const FieldRow: React.FC<FieldRowProps> = ({
   return (
     <tr className={isEditingConditions ? "table-active" : ""}>
       {compact ? (
-        <td className="text-center col-checkbox">
+        <td
+          className="text-center col-checkbox"
+          style={{ width: "1%", whiteSpace: "nowrap" }}
+        >
           <input
             type="checkbox"
             className="form-check-input"
@@ -59,7 +56,11 @@ export const FieldRow: React.FC<FieldRowProps> = ({
         </td>
       ) : (
         <>
-          <td className="text-center col-order">
+          {/* عمود الترتيب - مصغر */}
+          <td
+            className="text-center col-order"
+            style={{ width: "65px", whiteSpace: "nowrap" }}
+          >
             <input
               type="number"
               className={`${inputClass} text-center px-1 no-spinner`}
@@ -79,10 +80,20 @@ export const FieldRow: React.FC<FieldRowProps> = ({
               }}
             />
           </td>
-          <td className="text-center col-field-id">
+
+          {/* عمود المعرف ID - مصغر */}
+          <td
+            className="text-center col-field-id"
+            style={{ width: "1%", whiteSpace: "nowrap" }}
+          >
             <code className="small fw-bold text-danger">{field.id}</code>
           </td>
-          <td className="text-center col-toggle">
+
+          {/* عمود التفعيل - مصغر */}
+          <td
+            className="text-center col-toggle"
+            style={{ width: "1%", whiteSpace: "nowrap" }}
+          >
             <input
               type="checkbox"
               className="form-check-input"
@@ -95,9 +106,8 @@ export const FieldRow: React.FC<FieldRowProps> = ({
         </>
       )}
 
-      {/* حقل تحديد القسم في حال وجود أقسام للمجموعة */}
       {sections.length > 0 && (
-        <td style={{ minWidth: "120px" }}>
+        <td style={{ width: "170px", minWidth: "170px", whiteSpace: "nowrap" }}>
           <select
             className={selectClass}
             value={field.sectionId || ""}
@@ -105,7 +115,7 @@ export const FieldRow: React.FC<FieldRowProps> = ({
               onUpdateField(index, "sectionId", e.target.value || undefined)
             }
           >
-            <option value="">(بدون قسم)</option>
+            <option value="">{t("no_section")}</option>
             {sections.map((sec) => (
               <option key={sec.id} value={sec.id}>
                 {sec.name}
@@ -115,101 +125,49 @@ export const FieldRow: React.FC<FieldRowProps> = ({
         </td>
       )}
 
-      <td className="col-field-name">
+      {/* عمود اسم الحقل - يتوسع للماكس */}
+      <td className="col-field-name" style={{ width: "auto" }}>
         <input
           type="text"
-          className={inputClass}
+          className={`${inputClass} w-100`}
           value={field.fieldName}
           onChange={(e) => onUpdateField(index, "fieldName", e.target.value)}
           placeholder={t("field_name")}
         />
       </td>
 
-      <td className="col-search-type">
-        <select
-          className={selectClass}
-          value={field.searchType}
-          onChange={(e) =>
-            onUpdateField(index, "searchType", e.target.value as SearchType)
-          }
-        >
-          <option value="elementId">ID</option>
-          <option value="regexId">Regex</option>
-          <option value="cssSelector">Selector</option>
-          <option value="elementPlaceholder">Placeholder</option>
-          <option value="formControlName">FormControl</option>
-          <option value="defaultValue">Default</option>
-        </select>
-      </td>
-
-      <td className="col-selector">
-        <input
-          type="text"
-          className={`${inputClass} font-monospace`}
-          value={field.searchValue}
-          onChange={(e) => onUpdateField(index, "searchValue", e.target.value)}
-          placeholder={t("element_selector")}
-        />
-      </td>
-
+      {/* عمود الإعدادات والتفاصيل - مصغر */}
       {!compact && (
-        <>
-          {isInjectionGroup && (
-            <td className="col-injection">
-              <input
-                type="text"
-                className={inputClass}
-                value={field.inputValue || ""}
-                onChange={(e) =>
-                  onUpdateField(index, "inputValue", e.target.value)
-                }
-                placeholder={t("injection_value")}
-              />
-            </td>
-          )}
-
-          <td className="text-center col-verification">
-            <select
-              className={selectClass}
-              value={field.verificationMode || "none"}
-              onChange={(e) =>
-                onUpdateField(
-                  index,
-                  "verificationMode",
-                  e.target.value as VerificationMode,
-                )
-              }
-            >
-              <option value="none">بدون تحقق</option>
-              <option value="extract_compare">استخرج ثم قارن</option>
-              <option value="compare_only">قارن فقط</option>
-            </select>
-          </td>
-
-          <td className="text-center col-conditions">
-            <button
-              type="button"
-              className={`btn btn-sm d-inline-flex align-items-center gap-1 ${
-                isEditingConditions ? "btn-warning" : "btn-outline-info"
-              }`}
-              onClick={onSelectForEdit}
-            >
-              {isEditingConditions ? (
-                <>
-                  <CheckCircle size={14} />{" "}
-                  <span>{t("currently_editing")}</span>
-                </>
-              ) : (
-                <>
-                  <Edit3 size={14} /> <span>{t("edit_conditions")}</span>
-                </>
-              )}
-            </button>
-          </td>
-        </>
+        <td
+          className="text-center col-conditions"
+          style={{ width: "1%", whiteSpace: "nowrap" }}
+        >
+          <button
+            type="button"
+            className={`btn btn-sm d-inline-flex align-items-center gap-1 ${
+              isEditingConditions ? "btn-warning" : "btn-outline-info"
+            }`}
+            onClick={onSelectForEdit}
+          >
+            {isEditingConditions ? (
+              <>
+                <CheckCircle size={14} /> <span>{t("currently_editing")}</span>
+              </>
+            ) : (
+              <>
+                <Edit3 size={14} />{" "}
+                <span>{t("field_options_and_conditions")}</span>
+              </>
+            )}
+          </button>
+        </td>
       )}
 
-      <td className="text-center col-action-sm">
+      {/* عمود الحذف - مصغر */}
+      <td
+        className="text-center col-action-sm"
+        style={{ width: "1%", whiteSpace: "nowrap" }}
+      >
         <button
           className="btn btn-sm btn-outline-danger p-1 d-inline-flex align-items-center justify-content-center"
           onClick={() => onDeleteField(index)}

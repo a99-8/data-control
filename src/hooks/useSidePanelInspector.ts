@@ -30,7 +30,27 @@ export function useSidePanelInspector() {
   const noneText = t("none");
 
   useEffect(() => {
-    getGroups().then(setGroups);
+    // 1. جلب المجموعات فور الفتح
+    getGroups().then((loadedGroups) => {
+      setGroups(loadedGroups);
+    });
+
+    // 2. الاستماع التلقائي لأي تغيير يحدث في Storage لمزامنة المجموعات لحظياً
+    const handleStorageChange = (
+      changes: Record<string, any>,
+      areaName: string,
+    ) => {
+      if (areaName === "local" && changes["local:scrapersGroups"]) {
+        const newGroups = changes["local:scrapersGroups"].newValue || [];
+        setGroups(newGroups);
+      }
+    };
+
+    browser.storage.onChanged.addListener(handleStorageChange);
+
+    return () => {
+      browser.storage.onChanged.removeListener(handleStorageChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -47,6 +67,9 @@ export function useSidePanelInspector() {
     };
   }, []);
 
+  // useSidePanelInspector.ts [تعديل التحديد والتنفيذ]
+
+  // 1. تحديد الترتيب التلقائي لاختيار الخاصية عند فحص العنصر
   useEffect(() => {
     if (inspectedData) {
       if (
@@ -55,6 +78,13 @@ export function useSidePanelInspector() {
         inspectedData.elementId !== noneText
       ) {
         setSelectedAttribute("elementId");
+      } else if (
+        inspectedData.elementLabel &&
+        inspectedData.elementLabel !== "لا يوجد" &&
+        inspectedData.elementLabel !== noneText
+      ) {
+        // إعطاء الأولوية للـ Label إذا لم يتوفر ID فريد
+        setSelectedAttribute("elementLabel");
       } else if (
         inspectedData.formControlName &&
         inspectedData.formControlName !== "لا يوجد" &&
@@ -67,28 +97,17 @@ export function useSidePanelInspector() {
         inspectedData.elementPlaceholder !== noneText
       ) {
         setSelectedAttribute("elementPlaceholder");
+      } else if (
+        inspectedData.cssSelector &&
+        inspectedData.cssSelector !== "لا يوجد" &&
+        inspectedData.cssSelector !== noneText
+      ) {
+        setSelectedAttribute("cssSelector");
       }
     }
   }, [inspectedData, noneText]);
 
-  const startInspect = async () => {
-    setInspecting(true);
-    const [tab] = await browser.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-    if (tab?.id) {
-      browser.tabs.sendMessage(tab.id, { action: "START_INSPECT" });
-    }
-  };
-
-  const copyToClipboard = (text: string, key: string) => {
-    if (text === "لا يوجد" || text === noneText) return;
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 1500);
-  };
-
+  // 2. تحديث دالة handleAddInspectedToTable لاستخراج القيمة عند التحديد
   const handleAddInspectedToTable = () => {
     if (!inspectedData || !customFieldName.trim()) {
       showAlert(
@@ -102,16 +121,21 @@ export function useSidePanelInspector() {
     let searchValue = "";
     if (selectedAttribute === "elementId")
       searchValue = inspectedData.elementId;
+    if (selectedAttribute === "elementLabel")
+      searchValue = inspectedData.elementLabel || ""; // <-- إضافة القيمة هنا
     if (selectedAttribute === "formControlName")
       searchValue = inspectedData.formControlName;
     if (selectedAttribute === "elementPlaceholder")
       searchValue = inspectedData.elementPlaceholder;
+    if (selectedAttribute === "cssSelector")
+      searchValue = inspectedData.cssSelector || "";
 
     if (!searchValue || searchValue === "لا يوجد" || searchValue === noneText) {
       showAlert(t("invalid_selected_option_value"), "warning", t("error"));
       return;
     }
 
+    // إكمال الحفظ بنفس الآلية المتبعة...
     const nextNum = fields.length + 1;
     const newId = `fld_${nextNum}`;
 
@@ -123,11 +147,50 @@ export function useSidePanelInspector() {
       searchValue: searchValue,
       inputValue: "",
       conditions: "",
+      verificationMode: "none",
+      sectionId: "",
     };
 
     setFields((prev) => [...prev, newField]);
     setSelectedIds((prev) => new Set([...prev, newField.id]));
     setCustomFieldName("");
+  };
+
+  // في ملف useSidePanelInspector.ts
+  const startInspect = async () => {
+    setInspecting(true);
+    try {
+      const [tab] = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+
+      // تجنب التشغيل على صفحات المتصفح الداخلية (chrome://, edge://, about:)
+      if (
+        !tab?.id ||
+        tab.url?.startsWith("chrome://") ||
+        tab.url?.startsWith("edge://") ||
+        tab.url?.startsWith("about:")
+      ) {
+        showAlert(t("cannot_inspect_system_page"), "danger", t("error"));
+        setInspecting(false);
+        return;
+      }
+
+      // إرسال الرسالة مع التقاط الخطأ في حال عدم استجابة الـ Content Script
+      await browser.tabs.sendMessage(tab.id, { action: "START_INSPECT" });
+    } catch (error) {
+      console.warn("Content script not ready or error sending message:", error);
+      showAlert(t("refresh_page_and_try_again"), "warning", t("warning"));
+      setInspecting(false);
+    }
+  };
+
+  const copyToClipboard = (text: string, key: string) => {
+    if (text === "لا يوجد" || text === noneText) return;
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 1500);
   };
 
   const handleAddField = () => {
@@ -142,6 +205,8 @@ export function useSidePanelInspector() {
       searchValue: "",
       inputValue: "",
       conditions: "",
+      verificationMode: "none",
+      sectionId: "",
     };
 
     setFields([...fields, newField]);
